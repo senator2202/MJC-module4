@@ -3,9 +3,12 @@ package com.epam.esm.service.impl;
 import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Tag;
+import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.ObjectConverter;
+import com.epam.esm.util.ServiceUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,8 @@ public class TagServiceImpl implements TagService {
 
     private TagDao tagDao;
 
+    private TagRepository tagRepository;
+
     /**
      * Instantiates a new Tag service.
      *
@@ -32,28 +37,33 @@ public class TagServiceImpl implements TagService {
         this.tagDao = tagDao;
     }
 
-    @Override
-    public Optional<TagDTO> findById(long id) {
-        return tagDao.findById(id).map(ObjectConverter::toTagDTO);
+    @Autowired
+    public void setTagRepository(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
     }
 
     @Override
-    public List<TagDTO> findAll(Integer limit, Integer offset) {
-        return tagDao.findAll(limit, offset)
-                .stream()
-                .map(ObjectConverter::toTagDTO)
-                .collect(Collectors.toList());
+    public Optional<TagDTO> findById(long id) {
+        return tagRepository.findById(id).map(ObjectConverter::toTagDTO);
+    }
+
+    @Override
+    public List<TagDTO> findAll(Integer page, Integer size) {
+        Optional<Pageable> optional = ServiceUtility.pageable(page, size);
+        List<Tag> tags =
+                optional.map(pageable -> tagRepository.findAll(pageable).get().collect(Collectors.toList()))
+                        .orElseGet(() -> tagRepository.findAll());
+        return ObjectConverter.toTagDTOs(tags);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public TagDTO add(TagDTO entity) {
-        Optional<Tag> optional = tagDao.findByName(entity.getName());
-        return optional
-                //if optional is present, convert from Optional<Tag> to Optional<TagDTO>
-                .map(ObjectConverter::toTagDTO)
-                //if optional is present, return optional.get, else add new tag and return its DTO
-                .orElseGet(() -> ObjectConverter.toTagDTO(tagDao.add(ObjectConverter.toTagEntity(entity))));
+        Tag tag = tagRepository.findByName(entity.getName());
+        if (tag == null) {
+            tag = tagRepository.save(ObjectConverter.toTagEntity(entity));
+        }
+        return ObjectConverter.toTagDTO(tag);
     }
 
     @Override

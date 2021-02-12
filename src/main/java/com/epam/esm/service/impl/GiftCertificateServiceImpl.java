@@ -5,15 +5,19 @@ import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
+import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.util.DateTimeUtility;
 import com.epam.esm.util.ObjectConverter;
-import com.epam.esm.validator.GiftEntityValidator;
+import com.epam.esm.util.ServiceUtility;
+import com.google.common.base.CaseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
@@ -29,6 +33,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private GiftCertificateDao giftCertificateDao;
     private TagDao tagDao;
 
+    private GiftCertificateRepository giftCertificateRepository;
+
     /**
      * Instantiates a new Gift certificate service.
      *
@@ -41,43 +47,60 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         this.tagDao = tagDao;
     }
 
+    @Autowired
+    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
+        this.giftCertificateRepository = giftCertificateRepository;
+    }
+
     @Override
     public Optional<GiftCertificateDTO> findById(long id) {
-        return giftCertificateDao.findById(id).map(ObjectConverter::toGiftCertificateDTO);
+        return giftCertificateRepository.findById(id).map(ObjectConverter::toGiftCertificateDTO);
     }
 
     @Override
     public List<GiftCertificateDTO> findAll(String name, String description, String tagNames,
-                                            String sortType, String direction, Integer limit, Integer offset) {
-        if (sortType != null) {
-            sortType = sortType.replace(DASH, UNDER_SCOPE);
-        }
+                                            String sortType, String direction, Integer page, Integer size) {
+        sortType = toCamelCase(sortType);
+        Optional<Pageable> pageable = ServiceUtility.pageableWithSort(page, size, sortType, direction);
         return ObjectConverter
+                .toGiftCertificateDTOs(giftCertificateRepository.findByDescriptionContaining(description, pageable.get()));
+        /*return ObjectConverter
                 .toGiftCertificateDTOs(giftCertificateDao.findAll(name, description,
                         tagNames != null ? tagNames.split(GiftEntityValidator.TAG_SPLITERATOR) : null, sortType,
-                        direction, limit, offset));
+                        direction, page, size));*/
+    }
+
+    /**
+     * Method returns source string in camel case format
+     */
+    private String toCamelCase(String source) {
+        if (source != null) {
+            source = source.replace(DASH, UNDER_SCOPE);
+            source = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, source);
+        }
+        return source;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public GiftCertificateDTO add(GiftCertificateDTO certificate) {
-        String currentDate = DateTimeUtility.getCurrentDateIso();
+        String currentDate = ServiceUtility.getCurrentDateIso();
         certificate.setCreateDate(currentDate);
         certificate.setLastUpdateDate(currentDate);
         GiftCertificate entity = ObjectConverter.toGiftCertificateEntity(certificate);
         findTagsInDB(entity);
-        return ObjectConverter.toGiftCertificateDTO(giftCertificateDao.add(entity));
+        return ObjectConverter.toGiftCertificateDTO(giftCertificateRepository.save(entity));
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Optional<GiftCertificateDTO> update(GiftCertificateDTO certificate) {
-        Optional<GiftCertificate> optional = giftCertificateDao.findById(certificate.getId());
+        Optional<GiftCertificate> optional = giftCertificateRepository.findById(certificate.getId());
         if (optional.isPresent()) {
             GiftCertificate found = optional.get();
             updateNotEmptyFields(certificate, found);
-            found.setLastUpdateDate(DateTimeUtility.getCurrentDateIso());
-            GiftCertificate updated = giftCertificateDao.update(found);
+            found.setLastUpdateDate(ServiceUtility.getCurrentDateIso());
+            GiftCertificate updated = giftCertificateRepository.save(found);
             optional = Optional.of(updated);
         }
         return optional.map(ObjectConverter::toGiftCertificateDTO);
@@ -85,7 +108,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public boolean delete(long id) {
-        return giftCertificateDao.delete(id);
+        boolean result;
+        if (giftCertificateRepository.existsById(id)) {
+            giftCertificateRepository.deleteById(id);
+            result = true;
+        } else {
+            result = false;
+        }
+        return result;
     }
 
     /**

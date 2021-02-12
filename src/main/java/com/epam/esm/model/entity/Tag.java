@@ -1,6 +1,6 @@
 package com.epam.esm.model.entity;
 
-import com.epam.esm.util.DateTimeUtility;
+import com.epam.esm.util.ServiceUtility;
 
 import javax.persistence.Column;
 import javax.persistence.PrePersist;
@@ -76,7 +76,7 @@ public class Tag extends Entity {
 
     private void audit(String operation) {
         this.operation = operation;
-        operationDate = DateTimeUtility.getCurrentDateIso();
+        operationDate = ServiceUtility.getCurrentDateIso();
     }
 
     @Override

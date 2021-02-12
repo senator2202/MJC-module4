@@ -72,16 +72,16 @@ public class TagApiController {
     }
 
     /**
-     * Find all certificates, optionally with limit and offset.
+     * Find all certificates, optionally with size of page and page number.
      *
-     * @param limit  the limit
-     * @param offset the offset
+     * @param size the size of page
+     * @param page the page number
      * @return the list
      */
     @GetMapping
-    public List<TagDTO> findAll(@RequestParam(required = false) Integer limit,
-                                @RequestParam(required = false) Integer offset) {
-        List<TagDTO> tags = service.findAll(limit, offset);
+    public List<TagDTO> findAll(@RequestParam(required = false) Integer page,
+                                @RequestParam(required = false) Integer size) {
+        List<TagDTO> tags = service.findAll(page, size);
         return tags.stream()
                 .map(TagApiController::addLinks)
                 .collect(Collectors.toList());

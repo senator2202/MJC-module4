@@ -10,11 +10,11 @@ import java.util.List;
 public interface TagService extends BaseService<TagDTO> {
 
     /**
-     * Find all list.
+     * Find all tags, according to page number and size of page.
      *
-     * @param limit  the limit
-     * @param offset the offset
+     * @param page  the page number
+     * @param size the size of page
      * @return the list
      */
-    List<TagDTO> findAll(Integer limit, Integer offset);
+    List<TagDTO> findAll(Integer page, Integer size);
 }

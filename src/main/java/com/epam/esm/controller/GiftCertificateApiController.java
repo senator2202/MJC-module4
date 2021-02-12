@@ -80,15 +80,15 @@ public class GiftCertificateApiController {
     }
 
     /**
-     * Find all certificates, satisfying optional find parameters, sort parameters, limit and offset.
+     * Find all certificates, satisfying optional find parameters, sort parameters, page and page size.
      *
-     * @param name        the name
-     * @param description the description
-     * @param tagNames    the tag names
-     * @param sortType    the sort type (price, duration, create-date, last-update-date)
-     * @param direction   the direction (desc, asc)
-     * @param limit       the limit
-     * @param offset      the offset
+     * @param name          the name
+     * @param description   the description
+     * @param tagNames      the tag names
+     * @param sortType      the sort type (price, duration, create-date, last-update-date)
+     * @param direction     the direction (desc, asc)
+     * @param page          the page number
+     * @param size          the page size
      * @return the list
      */
     @GetMapping
@@ -97,14 +97,14 @@ public class GiftCertificateApiController {
                                             @RequestParam(value = "tags", required = false) String tagNames,
                                             @RequestParam(value = "sort", required = false) String sortType,
                                             @RequestParam(required = false) String direction,
-                                            @RequestParam(required = false) Integer limit,
-                                            @RequestParam(required = false) Integer offset) {
+                                            @RequestParam(required = false) Integer page,
+                                            @RequestParam(required = false) Integer size) {
         if (!GiftEntityValidator.
-                correctOptionalParameters(name, description, tagNames, sortType, direction, limit, offset)) {
+                correctOptionalParameters(name, description, tagNames, sortType, direction, page, size)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.WRONG_OPTIONAL_PARAMETERS);
         }
         List<GiftCertificateDTO> giftCertificates =
-                service.findAll(name, description, tagNames, sortType, direction, limit, offset);
+                service.findAll(name, description, tagNames, sortType, direction, page, size);
         return giftCertificates.stream()
                 .map(GiftCertificateApiController::addSelfLink)
                 .collect(Collectors.toList());

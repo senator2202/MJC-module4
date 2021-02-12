@@ -137,4 +137,14 @@ public class ObjectConverter {
     public static List<OrderDTO> toOrderDTOs(List<Order> orders) {
         return orders.stream().map(ObjectConverter::toOrderDTO).collect(Collectors.toList());
     }
+
+    /**
+     * Method converts Tags to TagDTOs.
+     *
+     * @param tags the tags
+     * @return the list of TagDTO
+     */
+    public static List<TagDTO> toTagDTOs(List<Tag> tags) {
+        return tags.stream().map(ObjectConverter::toTagDTO).collect(Collectors.toList());
+    }
 }

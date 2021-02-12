@@ -10,7 +10,7 @@ import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.util.DateTimeUtility;
+import com.epam.esm.util.ServiceUtility;
 import com.epam.esm.util.ObjectConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,7 +55,7 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setUser(user);
         orderEntity.setGiftCertificate(giftCertificate);
         orderEntity.setCost(giftCertificate.getPrice());
-        orderEntity.setOrderDate(DateTimeUtility.getCurrentDateIso());
+        orderEntity.setOrderDate(ServiceUtility.getCurrentDateIso());
         return ObjectConverter.toOrderDTO(orderDao.add(orderEntity));
     }
 

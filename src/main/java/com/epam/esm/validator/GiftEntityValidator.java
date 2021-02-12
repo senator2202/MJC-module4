@@ -35,13 +35,13 @@ public class GiftEntityValidator {
     /**
      * Method validates parameters, that must be either null or match regular expressions
      *
-     * @param name        the name
-     * @param description the description
-     * @param tagNames    the tag names
-     * @param sortType    the sort type
-     * @param direction   the direction
-     * @param limit       the limit
-     * @param offset      the offset
+     * @param name          the name
+     * @param description   the description
+     * @param tagNames      the tag names
+     * @param sortType      the sort type
+     * @param direction     the direction
+     * @param page          the page number
+     * @param size          the page size
      * @return the boolean
      */
     public static boolean correctOptionalParameters(String name,
@@ -49,8 +49,8 @@ public class GiftEntityValidator {
                                                     String tagNames,
                                                     String sortType,
                                                     String direction,
-                                                    Integer limit,
-                                                    Integer offset) {
+                                                    Integer page,
+                                                    Integer size) {
         if (name != null && !name.matches(NAME_REGEX)) {
             return false;
         }
@@ -62,8 +62,8 @@ public class GiftEntityValidator {
         }
         return correctSortType(sortType) &&
                 correctDirection(direction) &&
-                correctOptionalNotNegativeIntValue(limit) &&
-                correctOptionalNotNegativeIntValue(offset);
+                correctOptionalNotNegativeIntValue(page) &&
+                correctOptionalNotNegativeIntValue(size);
     }
 
     /**
