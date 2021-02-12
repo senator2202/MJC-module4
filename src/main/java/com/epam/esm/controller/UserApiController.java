@@ -69,14 +69,14 @@ public class UserApiController {
     /**
      * Find all users, optionally with limit and offset.
      *
-     * @param limit  the limit
-     * @param offset the offset
+     * @param page  the page number
+     * @param size the page size
      * @return the list of user dto
      */
     @GetMapping
-    public List<UserDTO> findAll(@RequestParam(required = false) Integer limit,
-                                 @RequestParam(required = false) Integer offset) {
-        List<UserDTO> users = userService.findAll(limit, offset);
+    public List<UserDTO> findAll(@RequestParam(required = false) Integer page,
+                                 @RequestParam(required = false) Integer size) {
+        List<UserDTO> users = userService.findAll(page, size);
         return users.stream()
                 .map(this::addUserLinks)
                 .collect(Collectors.toList());

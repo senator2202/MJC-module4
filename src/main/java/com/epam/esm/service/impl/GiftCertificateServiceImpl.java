@@ -9,15 +9,14 @@ import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.ObjectConverter;
 import com.epam.esm.util.ServiceUtility;
+import com.epam.esm.validator.GiftEntityValidator;
 import com.google.common.base.CaseFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
@@ -61,9 +60,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificateDTO> findAll(String name, String description, String tagNames,
                                             String sortType, String direction, Integer page, Integer size) {
         sortType = toCamelCase(sortType);
-        Optional<Pageable> pageable = ServiceUtility.pageableWithSort(page, size, sortType, direction);
+        Pageable pageable = ServiceUtility.pageableWithSort(page, size, sortType, direction);
         return ObjectConverter
-                .toGiftCertificateDTOs(giftCertificateRepository.findByDescriptionContaining(description, pageable.get()));
+                .toGiftCertificateDTOs(giftCertificateDao.findAll(name, description,
+                        tagNames != null ? tagNames.split(GiftEntityValidator.TAG_SPLITERATOR) : null, pageable));
         /*return ObjectConverter
                 .toGiftCertificateDTOs(giftCertificateDao.findAll(name, description,
                         tagNames != null ? tagNames.split(GiftEntityValidator.TAG_SPLITERATOR) : null, sortType,
@@ -108,14 +108,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public boolean delete(long id) {
-        boolean result;
-        if (giftCertificateRepository.existsById(id)) {
-            giftCertificateRepository.deleteById(id);
-            result = true;
-        } else {
-            result = false;
-        }
-        return result;
+        return giftCertificateDao.delete(id);
     }
 
     /**

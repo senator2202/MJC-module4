@@ -7,12 +7,15 @@ import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.dto.UserDTO;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.ObjectConverter;
+import com.epam.esm.util.ServiceUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The type User service.
@@ -44,8 +47,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAll(Integer limit, Integer offset) {
-        return ObjectConverter.toUserDTOs(userDao.findAll(limit, offset));
+    public List<UserDTO> findAll(Integer page, Integer size) {
+        Pageable pageable = ServiceUtility.pageable(page, size);
+        return userDao.findAll(pageable).get()
+                .map(ObjectConverter::toUserDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -8,11 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
-    //Page<Tag> findAll(Pageable pageable);
-
-    @Query("select t from Tag t where t.name = :tagName")
-    Tag findByName(@Param("tagName") String tagName);
+    Optional<Tag> findByName(String name);
 }

@@ -2,10 +2,19 @@ package com.epam.esm.model.dao.impl;
 
 import com.epam.esm.model.dao.GiftCertificateDao;
 import com.epam.esm.model.entity.GiftCertificate;
+import com.epam.esm.model.repository.GiftCertificateRepository;
+import com.epam.esm.model.repository.OrderRepository;
+import com.epam.esm.model.repository.specification.GiftCertificateDescriptionLikeSpecification;
+import com.epam.esm.model.repository.specification.GiftCertificateFindAllSpecification;
+import com.epam.esm.model.repository.specification.GiftCertificateNameLikeSpecification;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +45,31 @@ public class JpaGiftCertificateDao extends AbstractJpaDao<GiftCertificate> imple
     private static final String ZERO = "0";
     private static final String OR = "or";
 
+    private OrderRepository orderRepository;
+
+    @Autowired
+    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
+        jpaRepository = giftCertificateRepository;
+    }
+
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
     @Override
-    public List<GiftCertificate> findAll(String name, String description, String[] tagNames,
-                                         String sortType, String direction, Integer limit, Integer offset) {
-        StringBuilder jpql = new StringBuilder(JPQL_FIND_ALL);
+    public List<GiftCertificate> findAll(String name, String description, String[] tagNames, Pageable pageable) {
+        Specification<GiftCertificate> specification = new GiftCertificateFindAllSpecification();
+        if (name != null) {
+            specification = specification.and(new GiftCertificateNameLikeSpecification(name));
+        }
+        if (description != null) {
+            specification = specification.and(new GiftCertificateDescriptionLikeSpecification(description));
+        }
+
+        return ((GiftCertificateRepository) jpaRepository).findAll(Specification.where(specification));
+
+        /*StringBuilder jpql = new StringBuilder(JPQL_FIND_ALL);
         Map<String, String> parameterMap = new HashMap<>();
         appendName(name, jpql, parameterMap);
         appendDescription(description, jpql, parameterMap);
@@ -56,7 +86,7 @@ public class JpaGiftCertificateDao extends AbstractJpaDao<GiftCertificate> imple
         if (offset != null) {
             query.setFirstResult(offset);
         }
-        return query.getResultList();
+        return query.getResultList();*/
     }
 
     /**
@@ -132,12 +162,9 @@ public class JpaGiftCertificateDao extends AbstractJpaDao<GiftCertificate> imple
     @Override
     @Transactional
     public boolean delete(long id) {
-        GiftCertificate giftCertificate = entityManager.find(GiftCertificate.class, id);
-        if (giftCertificate != null) {
-            entityManager.createQuery(JPQL_DELETE_ORDERS_BY_CERTIFICATE_ID)
-                    .setParameter(1, id)
-                    .executeUpdate();
-            entityManager.remove(giftCertificate);
+        if (jpaRepository.existsById(id)) {
+            orderRepository.deleteOrderByGiftCertificateId(id);
+            jpaRepository.deleteById(id);
             return true;
         } else {
             return false;

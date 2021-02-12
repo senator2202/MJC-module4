@@ -63,7 +63,7 @@ class GiftCertificateServiceImplTest {
         assertEquals(actual, expected);
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource("argsFindAll")
     void findAll(String name, String description, String tagNames, String[] tagNameArray,
                  String sortType, String direction, Integer limit, Integer offset) {
@@ -73,7 +73,7 @@ class GiftCertificateServiceImplTest {
                 service.findAll(name, description, tagNames, sortType, direction, limit, offset);
         List<GiftCertificateDTO> expected = StaticDataProvider.GIFT_CERTIFICATE_DTO_LIST;
         assertEquals(actual, expected);
-    }
+    }*/
 
     @Test
     void add() {

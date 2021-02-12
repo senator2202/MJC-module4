@@ -2,6 +2,8 @@ package com.epam.esm.model.dao.impl;
 
 import com.epam.esm.model.dao.BaseDao;
 import com.epam.esm.model.entity.Entity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,27 +25,33 @@ public abstract class AbstractJpaDao<T extends Entity> implements BaseDao<T> {
     @PersistenceContext
     protected EntityManager entityManager;
 
+    protected JpaRepository<T, Long> jpaRepository;
+
     @Override
     public Optional<T> findById(long id) {
-        return Optional.ofNullable(entityManager.find(getEntityClass(), id));
+        return jpaRepository.findById(id);
     }
 
     @Override
     @Transactional
     public T add(T entity) {
-        entityManager.persist(entity);
-        return entity;
+        return jpaRepository.save(entity);
     }
 
     @Override
     @Transactional
     public T update(T entity) {
-        return entityManager.merge(entity);
+        return jpaRepository.save(entity);
     }
 
     @Override
     public boolean delete(long id) {
-        throw new UnsupportedOperationException();
+        if (jpaRepository.existsById(id)) {
+            jpaRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.epam.esm.model.dao;
 
 import com.epam.esm.model.entity.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +20,12 @@ public interface TagDao extends BaseDao<Tag> {
      */
     Optional<Tag> findByName(String name);
 
+
     /**
-     * Find all list.
+     * Find all tags.
      *
-     * @param limit  the limit
-     * @param offset the offset
-     * @return the list
+     * @param pageable the pageable
+     * @return the page
      */
-    List<Tag> findAll(Integer limit, Integer offset);
+    Page<Tag> findAll(Pageable pageable);
 }

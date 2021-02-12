@@ -22,11 +22,11 @@ public interface UserService {
     /**
      * Find all list.
      *
-     * @param limit  the limit
-     * @param offset the offset
+     * @param page  the page number
+     * @param size the of page
      * @return the list
      */
-    List<UserDTO> findAll(Integer limit, Integer offset);
+    List<UserDTO> findAll(Integer page, Integer size);
 
     /**
      * Most widely used tag of user with highest orders sum optional.

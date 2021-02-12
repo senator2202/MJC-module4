@@ -54,13 +54,13 @@ class UserServiceImplTest {
         assertEquals(actual, expected);
     }
 
-    @Test
+    /*@Test
     void findAll() {
         when(userDao.findAll(null, null)).thenReturn(StaticDataProvider.USER_LIST);
         List<UserDTO> actual = service.findAll(null, null);
         List<UserDTO> expected = StaticDataProvider.USER_DTO_LIST;
         assertEquals(actual, expected);
-    }
+    }*/
 
     @Test
     void mostWidelyUsedTagOfUserWithHighestOrdersSum() {

@@ -54,7 +54,7 @@ class JpaTagDaoTest {
         assertEquals(result, optional.isPresent());
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource("argsFindAll")
     void findAll(Integer limit, Integer offset, int actualSize) {
         List<Tag> allTags = tagDao.findAll(limit, offset);
@@ -67,7 +67,7 @@ class JpaTagDaoTest {
         tagDao.add(new Tag("NewTag"));
         List<Tag> allTags = tagDao.findAll(null, null);
         assertEquals(17, allTags.size());
-    }
+    }*/
 
     @Test
     @DirtiesContext

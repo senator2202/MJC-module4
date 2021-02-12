@@ -66,7 +66,7 @@ class JpaGiftCertificateDaoTest {
         assertEquals(result, optional.isPresent());
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource("argsFindAll")
     void findAll(
             String name,
@@ -89,7 +89,7 @@ class JpaGiftCertificateDaoTest {
         List<GiftCertificate> sorted = new ArrayList<>(allTags);
         sorted.sort(comparator);
         assertEquals(allTags, sorted);
-    }
+    }*/
 
     @ParameterizedTest
     @MethodSource("argsFindById")

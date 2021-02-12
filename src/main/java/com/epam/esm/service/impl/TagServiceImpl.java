@@ -25,10 +25,8 @@ public class TagServiceImpl implements TagService {
 
     private TagDao tagDao;
 
-    private TagRepository tagRepository;
-
     /**
-     * Instantiates a new Tag service.
+     * Instantiates a new TagDao.
      *
      * @param tagDao the tag dao
      */
@@ -37,33 +35,24 @@ public class TagServiceImpl implements TagService {
         this.tagDao = tagDao;
     }
 
-    @Autowired
-    public void setTagRepository(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
-    }
-
     @Override
     public Optional<TagDTO> findById(long id) {
-        return tagRepository.findById(id).map(ObjectConverter::toTagDTO);
+        return tagDao.findById(id).map(ObjectConverter::toTagDTO);
     }
 
     @Override
     public List<TagDTO> findAll(Integer page, Integer size) {
-        Optional<Pageable> optional = ServiceUtility.pageable(page, size);
-        List<Tag> tags =
-                optional.map(pageable -> tagRepository.findAll(pageable).get().collect(Collectors.toList()))
-                        .orElseGet(() -> tagRepository.findAll());
-        return ObjectConverter.toTagDTOs(tags);
+        Pageable pageable = ServiceUtility.pageable(page, size);
+        return tagDao.findAll(pageable).get()
+                .map(ObjectConverter::toTagDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public TagDTO add(TagDTO entity) {
-        Tag tag = tagRepository.findByName(entity.getName());
-        if (tag == null) {
-            tag = tagRepository.save(ObjectConverter.toTagEntity(entity));
-        }
-        return ObjectConverter.toTagDTO(tag);
+        return tagDao.findByName(entity.getName()).map(ObjectConverter::toTagDTO)
+                .orElseGet(() -> ObjectConverter.toTagDTO(tagDao.add(ObjectConverter.toTagEntity(entity))));
     }
 
     @Override

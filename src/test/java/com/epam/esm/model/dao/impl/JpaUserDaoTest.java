@@ -50,10 +50,10 @@ class JpaUserDaoTest {
         assertEquals(result, optional.isPresent());
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource("argsFindAll")
     void findAll(Integer limit, Integer offset, int actualSize) {
         List<User> allTags = userDao.findAll(limit, offset);
         assertEquals(actualSize, allTags.size());
-    }
+    }*/
 }

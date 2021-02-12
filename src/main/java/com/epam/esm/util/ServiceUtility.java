@@ -32,9 +32,9 @@ public class ServiceUtility {
      * @param size      the size
      * @param sort      the sort
      * @param direction the direction
-     * @return the optional
+     * @return the Pageable object
      */
-    public static Optional<Pageable> pageableWithSort(Integer page, Integer size, String sort, String direction) {
+    public static Pageable pageableWithSort(Integer page, Integer size, String sort, String direction) {
         Pageable pageable;
         int intPage = page != null ? page : 0;
         if (size != null) {
@@ -47,9 +47,9 @@ public class ServiceUtility {
                 pageable = PageRequest.of(intPage, size);
             }
         } else {
-            pageable = null;
+            pageable = Pageable.unpaged();
         }
-        return Optional.ofNullable(pageable);
+        return pageable;
     }
 
     /**
@@ -57,16 +57,16 @@ public class ServiceUtility {
      *
      * @param page the page
      * @param size the size
-     * @return the optional
+     * @return the Pageable object
      */
-    public static Optional<Pageable> pageable(Integer page, Integer size) {
+    public static Pageable pageable(Integer page, Integer size) {
         Pageable pageable;
         int intPage = page != null ? page : 0;
         if (size != null) {
             pageable = PageRequest.of(intPage, size);
         } else {
-            pageable = null;
+            pageable = Pageable.unpaged();
         }
-        return Optional.ofNullable(pageable);
+        return pageable;
     }
 }
