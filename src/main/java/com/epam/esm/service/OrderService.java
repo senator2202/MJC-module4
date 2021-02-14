@@ -32,8 +32,8 @@ public interface OrderService {
      * Find orders by user id list, limiting them by page number and page size.
      *
      * @param userId the user id
-     * @param page  the page number
-     * @param size the page size
+     * @param page   the page number
+     * @param size   the page size
      * @return the list
      */
     List<OrderDTO> findOrdersByUserId(long userId, Integer page, Integer size);

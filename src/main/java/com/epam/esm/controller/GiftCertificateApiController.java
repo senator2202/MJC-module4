@@ -82,13 +82,13 @@ public class GiftCertificateApiController {
     /**
      * Find all certificates, satisfying optional find parameters, sort parameters, page and page size.
      *
-     * @param name          the name
-     * @param description   the description
-     * @param tagNames      the tag names
-     * @param sortType      the sort type (price, duration, create-date, last-update-date)
-     * @param direction     the direction (desc, asc)
-     * @param page          the page number
-     * @param size          the page size
+     * @param name        the name
+     * @param description the description
+     * @param tagNames    the tag names
+     * @param sortType    the sort type (price, duration, create-date, last-update-date)
+     * @param direction   the direction (desc, asc)
+     * @param page        the page number
+     * @param size        the page size
      * @return the list
      */
     @GetMapping

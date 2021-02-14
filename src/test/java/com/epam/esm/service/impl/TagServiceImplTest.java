@@ -25,7 +25,7 @@ class TagServiceImplTest {
     private TagDao tagDao;
 
     @InjectMocks
-    private final TagService service = new TagServiceImpl(tagDao);
+    private final TagService service = new TagServiceImpl();
 
     @BeforeEach
     void setUp() {

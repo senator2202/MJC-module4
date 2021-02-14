@@ -3,15 +3,12 @@ package com.epam.esm.model.repository.specification;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Selection;
 import java.util.Arrays;
 import java.util.List;
 

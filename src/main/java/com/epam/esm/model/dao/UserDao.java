@@ -4,7 +4,6 @@ import com.epam.esm.model.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,7 +22,7 @@ public interface UserDao {
     /**
      * Find all users.
      *
-     * @param pageable  the Pageable object
+     * @param pageable the Pageable object
      * @return the list
      */
     Page<User> findAll(Pageable pageable);

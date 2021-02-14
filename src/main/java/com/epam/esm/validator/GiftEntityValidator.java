@@ -35,13 +35,13 @@ public class GiftEntityValidator {
     /**
      * Method validates parameters, that must be either null or match regular expressions
      *
-     * @param name          the name
-     * @param description   the description
-     * @param tagNames      the tag names
-     * @param sortType      the sort type
-     * @param direction     the direction
-     * @param page          the page number
-     * @param size          the page size
+     * @param name        the name
+     * @param description the description
+     * @param tagNames    the tag names
+     * @param sortType    the sort type
+     * @param direction   the direction
+     * @param page        the page number
+     * @param size        the page size
      * @return the boolean
      */
     public static boolean correctOptionalParameters(String name,

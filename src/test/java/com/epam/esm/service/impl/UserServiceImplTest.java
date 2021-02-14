@@ -31,7 +31,7 @@ class UserServiceImplTest {
     private TagDao tagDao;
 
     @InjectMocks
-    private final UserService service = new UserServiceImpl(userDao, orderDao, tagDao);
+    private final UserService service = new UserServiceImpl();
 
     @BeforeEach
     void setUp() {

@@ -4,19 +4,11 @@ import com.epam.esm.model.dao.GiftCertificateDao;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
-import com.epam.esm.model.repository.specification.GiftCertificateContainsTagNamesSpecification;
-import com.epam.esm.model.repository.specification.GiftCertificateDescriptionLikeSpecification;
-import com.epam.esm.model.repository.specification.GiftCertificateFindAllSpecification;
-import com.epam.esm.model.repository.specification.GiftCertificateNameLikeSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

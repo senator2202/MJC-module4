@@ -22,7 +22,7 @@ public interface UserService {
     /**
      * Find all list.
      *
-     * @param page  the page number
+     * @param page the page number
      * @param size the of page
      * @return the list
      */

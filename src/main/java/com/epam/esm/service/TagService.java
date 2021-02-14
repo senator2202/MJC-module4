@@ -12,7 +12,7 @@ public interface TagService extends BaseService<TagDTO> {
     /**
      * Find all tags, according to page number and size of page.
      *
-     * @param page  the page number
+     * @param page the page number
      * @param size the size of page
      * @return the list
      */

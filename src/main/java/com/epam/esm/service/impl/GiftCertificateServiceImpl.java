@@ -1,11 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.model.dao.GiftCertificateDao;
-import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.QGiftCertificate;
-import com.epam.esm.model.entity.QTag;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
@@ -15,14 +12,9 @@ import com.epam.esm.util.ObjectConverter;
 import com.epam.esm.util.ServiceUtility;
 import com.epam.esm.validator.GiftEntityValidator;
 import com.google.common.base.CaseFormat;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,24 +31,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private static final String DASH = "-";
     private static final String UNDER_SCOPE = "_";
-    private GiftCertificateDao giftCertificateDao;
-    private TagDao tagDao;
 
     private GiftCertificateRepository giftCertificateRepository;
     private OrderRepository orderRepository;
     private TagRepository tagRepository;
-
-    /**
-     * Instantiates a new Gift certificate service.
-     *
-     * @param giftCertificateDao the gift certificate dao
-     * @param tagDao             the tag dao
-     */
-    @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, TagDao tagDao) {
-        this.giftCertificateDao = giftCertificateDao;
-        this.tagDao = tagDao;
-    }
 
     @Autowired
     public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {

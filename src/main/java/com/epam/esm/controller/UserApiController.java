@@ -69,7 +69,7 @@ public class UserApiController {
     /**
      * Find all users, optionally with limit and offset.
      *
-     * @param page  the page number
+     * @param page the page number
      * @param size the page size
      * @return the list of user dto
      */
@@ -116,8 +116,8 @@ public class UserApiController {
      * Find user orders, optionally with page number and page size.
      *
      * @param userId the user id
-     * @param page  the page number
-     * @param size the page size
+     * @param page   the page number
+     * @param size   the page size
      * @return the list
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders")

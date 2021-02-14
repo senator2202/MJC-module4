@@ -32,7 +32,7 @@ class GiftCertificateServiceImplTest {
     private TagDao tagDao;
 
     @InjectMocks
-    private final GiftCertificateService service = new GiftCertificateServiceImpl(giftCertificateDao, tagDao);
+    private final GiftCertificateService service = new GiftCertificateServiceImpl();
 
     static Stream<Arguments> argsFindAll() {
         return Stream.of(

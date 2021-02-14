@@ -1,6 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.repository.TagRepository;
@@ -23,19 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class TagServiceImpl implements TagService {
 
-    private TagDao tagDao;
-
     private TagRepository tagRepository;
-
-    /**
-     * Instantiates a new TagDao.
-     *
-     * @param tagDao the tag dao
-     */
-    @Autowired
-    public TagServiceImpl(TagDao tagDao) {
-        this.tagDao = tagDao;
-    }
 
     /**
      * Sets tag repository.
@@ -49,7 +36,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Optional<TagDTO> findById(long id) {
-        return tagDao.findById(id).map(ObjectConverter::toTagDTO);
+        return tagRepository.findById(id).map(ObjectConverter::toTagDTO);
     }
 
     @Override
@@ -64,7 +51,7 @@ public class TagServiceImpl implements TagService {
     @Transactional(propagation = Propagation.REQUIRED)
     public TagDTO add(TagDTO entity) {
         return tagRepository.findByName(entity.getName()).map(ObjectConverter::toTagDTO)
-                .orElseGet(() -> ObjectConverter.toTagDTO(tagDao.add(ObjectConverter.toTagEntity(entity))));
+                .orElseGet(() -> ObjectConverter.toTagDTO(tagRepository.save(ObjectConverter.toTagEntity(entity))));
     }
 
     @Override

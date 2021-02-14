@@ -2,20 +2,16 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.controller.error_handler.ProjectError;
 import com.epam.esm.controller.exception.ExceptionProvider;
-import com.epam.esm.model.dao.GiftCertificateDao;
-import com.epam.esm.model.dao.OrderDao;
-import com.epam.esm.model.dao.UserDao;
 import com.epam.esm.model.dto.OrderDTO;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
-import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.model.repository.UserRepository;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.util.ServiceUtility;
 import com.epam.esm.util.ObjectConverter;
+import com.epam.esm.util.ServiceUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,9 +27,6 @@ import java.util.Optional;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private OrderDao orderDao;
-    private UserDao userDao;
-    private GiftCertificateDao giftCertificateDao;
     private ExceptionProvider exceptionProvider;
 
     private UserRepository userRepository;
@@ -41,13 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private GiftCertificateRepository giftCertificateRepository;
 
     @Autowired
-    public OrderServiceImpl(OrderDao orderDao,
-                            UserDao userDao,
-                            GiftCertificateDao giftCertificateDao,
-                            ExceptionProvider exceptionProvider) {
-        this.orderDao = orderDao;
-        this.userDao = userDao;
-        this.giftCertificateDao = giftCertificateDao;
+    public void setExceptionProvider(ExceptionProvider exceptionProvider) {
         this.exceptionProvider = exceptionProvider;
     }
 

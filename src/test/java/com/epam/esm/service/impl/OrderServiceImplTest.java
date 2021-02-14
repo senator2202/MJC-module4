@@ -38,7 +38,7 @@ class OrderServiceImplTest {
     private ExceptionProvider exceptionProvider;
 
     @InjectMocks
-    private final OrderService service = new OrderServiceImpl(orderDao, userDao, giftCertificateDao, exceptionProvider);
+    private final OrderService service = new OrderServiceImpl();
 
     @BeforeEach
     void setUp() {
