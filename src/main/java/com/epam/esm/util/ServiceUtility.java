@@ -6,7 +6,6 @@ import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 /**
  * Utility class, consists of methods, working with date and time.
@@ -37,17 +36,14 @@ public class ServiceUtility {
     public static Pageable pageableWithSort(Integer page, Integer size, String sort, String direction) {
         Pageable pageable;
         int intPage = page != null ? page : 0;
-        if (size != null) {
-            if (sort != null) {
-                Sort.Direction enumDirection = direction != null
-                        ? Sort.Direction.valueOf(direction.toUpperCase())
-                        : Sort.Direction.ASC;
-                pageable = PageRequest.of(intPage, size, Sort.by(enumDirection, sort));
-            } else {
-                pageable = PageRequest.of(intPage, size);
-            }
+        int intSize = size != null ? size : Integer.MAX_VALUE;
+        if (sort != null) {
+            Sort.Direction enumDirection = direction != null
+                    ? Sort.Direction.valueOf(direction.toUpperCase())
+                    : Sort.Direction.ASC;
+            pageable = PageRequest.of(intPage, intSize, Sort.by(enumDirection, sort));
         } else {
-            pageable = Pageable.unpaged();
+            pageable = PageRequest.of(intPage, intSize);
         }
         return pageable;
     }

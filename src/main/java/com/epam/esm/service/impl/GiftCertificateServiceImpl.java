@@ -4,22 +4,32 @@ import com.epam.esm.model.dao.GiftCertificateDao;
 import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.entity.GiftCertificate;
+import com.epam.esm.model.entity.QGiftCertificate;
+import com.epam.esm.model.entity.QTag;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.repository.GiftCertificateRepository;
+import com.epam.esm.model.repository.OrderRepository;
+import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.ObjectConverter;
 import com.epam.esm.util.ServiceUtility;
 import com.epam.esm.validator.GiftEntityValidator;
 import com.google.common.base.CaseFormat;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The type Gift certificate service.
@@ -33,6 +43,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private TagDao tagDao;
 
     private GiftCertificateRepository giftCertificateRepository;
+    private OrderRepository orderRepository;
+    private TagRepository tagRepository;
 
     /**
      * Instantiates a new Gift certificate service.
@@ -51,6 +63,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         this.giftCertificateRepository = giftCertificateRepository;
     }
 
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setTagRepository(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
+    }
+
     @Override
     public Optional<GiftCertificateDTO> findById(long id) {
         return giftCertificateRepository.findById(id).map(ObjectConverter::toGiftCertificateDTO);
@@ -59,15 +81,24 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificateDTO> findAll(String name, String description, String tagNames,
                                             String sortType, String direction, Integer page, Integer size) {
-        sortType = toCamelCase(sortType);
-        Pageable pageable = ServiceUtility.pageableWithSort(page, size, sortType, direction);
-        return ObjectConverter
-                .toGiftCertificateDTOs(giftCertificateDao.findAll(name, description,
-                        tagNames != null ? tagNames.split(GiftEntityValidator.TAG_SPLITERATOR) : null, pageable));
-        /*return ObjectConverter
-                .toGiftCertificateDTOs(giftCertificateDao.findAll(name, description,
-                        tagNames != null ? tagNames.split(GiftEntityValidator.TAG_SPLITERATOR) : null, sortType,
-                        direction, page, size));*/
+        QGiftCertificate certificateModel = QGiftCertificate.giftCertificate;
+        BooleanExpression filterExpression = certificateModel.isNotNull();
+        if (name != null) {
+            filterExpression = filterExpression.and(certificateModel.name.containsIgnoreCase(name));
+        }
+        if (description != null) {
+            filterExpression = filterExpression.and(certificateModel.description.containsIgnoreCase(description));
+        }
+        if (tagNames != null) {
+            String[] tagArray = tagNames.split(GiftEntityValidator.TAG_SPLITERATOR);
+            for (String s : tagArray) {
+                filterExpression = filterExpression.and(certificateModel.tags.any().name.eq(s));
+            }
+        }
+        Pageable pageable = ServiceUtility.pageableWithSort(page, size, toCamelCase(sortType), direction);
+        return giftCertificateRepository.findAll(filterExpression, pageable).get()
+                .map(ObjectConverter::toGiftCertificateDTO)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -82,7 +113,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public GiftCertificateDTO add(GiftCertificateDTO certificate) {
         String currentDate = ServiceUtility.getCurrentDateIso();
         certificate.setCreateDate(currentDate);
@@ -93,7 +124,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public Optional<GiftCertificateDTO> update(GiftCertificateDTO certificate) {
         Optional<GiftCertificate> optional = giftCertificateRepository.findById(certificate.getId());
         if (optional.isPresent()) {
@@ -107,8 +138,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional
     public boolean delete(long id) {
-        return giftCertificateDao.delete(id);
+        if (giftCertificateRepository.existsById(id)) {
+            orderRepository.deleteOrderByGiftCertificateId(id);
+            giftCertificateRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -144,7 +182,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             ListIterator<Tag> iterator = tags.listIterator();
             while (iterator.hasNext()) {
                 Tag tag = iterator.next();
-                Optional<Tag> optionalTag = tagDao.findByName(tag.getName());
+                Optional<Tag> optionalTag = tagRepository.findByName(tag.getName());
                 optionalTag.ifPresent(iterator::set);
             }
         }

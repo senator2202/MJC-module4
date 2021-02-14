@@ -9,10 +9,15 @@ import com.epam.esm.model.dto.OrderDTO;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
 import com.epam.esm.model.entity.User;
+import com.epam.esm.model.repository.GiftCertificateRepository;
+import com.epam.esm.model.repository.OrderRepository;
+import com.epam.esm.model.repository.TagRepository;
+import com.epam.esm.model.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.util.ServiceUtility;
 import com.epam.esm.util.ObjectConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +36,10 @@ public class OrderServiceImpl implements OrderService {
     private GiftCertificateDao giftCertificateDao;
     private ExceptionProvider exceptionProvider;
 
+    private UserRepository userRepository;
+    private OrderRepository orderRepository;
+    private GiftCertificateRepository giftCertificateRepository;
+
     @Autowired
     public OrderServiceImpl(OrderDao orderDao,
                             UserDao userDao,
@@ -42,13 +51,28 @@ public class OrderServiceImpl implements OrderService {
         this.exceptionProvider = exceptionProvider;
     }
 
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
+        this.giftCertificateRepository = giftCertificateRepository;
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public OrderDTO add(long userId, long certificateId) {
-        User user = userDao.findById(userId).orElseThrow(
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.USER_NOT_FOUND)
         );
-        GiftCertificate giftCertificate = giftCertificateDao.findById(certificateId).orElseThrow(
+        GiftCertificate giftCertificate = giftCertificateRepository.findById(certificateId).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.GIFT_CERTIFICATE_NOT_FOUND)
         );
         Order orderEntity = new Order();
@@ -56,21 +80,25 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setGiftCertificate(giftCertificate);
         orderEntity.setCost(giftCertificate.getPrice());
         orderEntity.setOrderDate(ServiceUtility.getCurrentDateIso());
-        return ObjectConverter.toOrderDTO(orderDao.add(orderEntity));
+        return ObjectConverter.toOrderDTO(orderRepository.save(orderEntity));
     }
 
     @Override
     @Transactional
     public Optional<OrderDTO> findUserOrderById(long userId, long orderId) {
-        userDao.findById(userId).orElseThrow(
+        userRepository.findById(userId).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.USER_NOT_FOUND)
         );
-        return orderDao.findById(orderId).filter(o -> o.getUser().getId() == userId).map(ObjectConverter::toOrderDTO);
+        return orderRepository.findById(orderId)
+                .filter(o -> o.getUser().getId() == userId)
+                .map(ObjectConverter::toOrderDTO);
     }
 
     @Override
     public List<OrderDTO> findOrdersByUserId(long userId, Integer limit, Integer offset) {
-        return ObjectConverter.toOrderDTOs(orderDao.findOrdersByUserId(userId, limit, offset));
+        Pageable pageable = ServiceUtility.pageable(limit, offset);
+        List<Order> ordersByUserId = orderRepository.findOrdersByUserId(userId, pageable);
+        return ObjectConverter.toOrderDTOs(ordersByUserId);
     }
 
 }

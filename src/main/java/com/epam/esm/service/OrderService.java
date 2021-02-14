@@ -29,13 +29,13 @@ public interface OrderService {
     Optional<OrderDTO> findUserOrderById(long userId, long orderId);
 
     /**
-     * Find orders by user id list.
+     * Find orders by user id list, limiting them by page number and page size.
      *
      * @param userId the user id
-     * @param limit  the limit
-     * @param offset the offset
+     * @param page  the page number
+     * @param size the page size
      * @return the list
      */
-    List<OrderDTO> findOrdersByUserId(long userId, Integer limit, Integer offset);
+    List<OrderDTO> findOrdersByUserId(long userId, Integer page, Integer size);
 
 }

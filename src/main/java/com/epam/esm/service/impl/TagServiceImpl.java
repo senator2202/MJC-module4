@@ -25,6 +25,8 @@ public class TagServiceImpl implements TagService {
 
     private TagDao tagDao;
 
+    private TagRepository tagRepository;
+
     /**
      * Instantiates a new TagDao.
      *
@@ -35,6 +37,16 @@ public class TagServiceImpl implements TagService {
         this.tagDao = tagDao;
     }
 
+    /**
+     * Sets tag repository.
+     *
+     * @param tagRepository the tag repository
+     */
+    @Autowired
+    public void setTagRepository(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
+    }
+
     @Override
     public Optional<TagDTO> findById(long id) {
         return tagDao.findById(id).map(ObjectConverter::toTagDTO);
@@ -43,7 +55,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDTO> findAll(Integer page, Integer size) {
         Pageable pageable = ServiceUtility.pageable(page, size);
-        return tagDao.findAll(pageable).get()
+        return tagRepository.findAll(pageable).get()
                 .map(ObjectConverter::toTagDTO)
                 .collect(Collectors.toList());
     }
@@ -51,19 +63,24 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public TagDTO add(TagDTO entity) {
-        return tagDao.findByName(entity.getName()).map(ObjectConverter::toTagDTO)
+        return tagRepository.findByName(entity.getName()).map(ObjectConverter::toTagDTO)
                 .orElseGet(() -> ObjectConverter.toTagDTO(tagDao.add(ObjectConverter.toTagEntity(entity))));
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Optional<TagDTO> update(TagDTO entity) {
-        Optional<Tag> optional = tagDao.findById(entity.getId());
-        return optional.map(t -> ObjectConverter.toTagDTO(tagDao.update(ObjectConverter.toTagEntity(entity))));
+        Optional<Tag> optional = tagRepository.findById(entity.getId());
+        return optional.map(t -> ObjectConverter.toTagDTO(tagRepository.save(ObjectConverter.toTagEntity(entity))));
     }
 
     @Override
     public boolean delete(long id) {
-        return tagDao.delete(id);
+        if (tagRepository.existsById(id)) {
+            tagRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

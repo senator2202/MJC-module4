@@ -113,18 +113,18 @@ public class UserApiController {
     }
 
     /**
-     * Find user orders, optionally with limit and offset.
+     * Find user orders, optionally with page number and page size.
      *
      * @param userId the user id
-     * @param limit  the limit
-     * @param offset the offset
+     * @param page  the page number
+     * @param size the page size
      * @return the list
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders")
     public List<OrderDTO> findUserOrders(@PathVariable long userId,
-                                         @RequestParam(required = false) Integer limit,
-                                         @RequestParam(required = false) Integer offset) {
-        List<OrderDTO> orders = orderService.findOrdersByUserId(userId, limit, offset);
+                                         @RequestParam(required = false) Integer page,
+                                         @RequestParam(required = false) Integer size) {
+        List<OrderDTO> orders = orderService.findOrdersByUserId(userId, page, size);
         return orders.stream().map(this::addOrderLinks).collect(Collectors.toList());
     }
 

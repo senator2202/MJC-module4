@@ -4,6 +4,7 @@ import com.epam.esm.model.dao.GiftCertificateDao;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
+import com.epam.esm.model.repository.specification.GiftCertificateContainsTagNamesSpecification;
 import com.epam.esm.model.repository.specification.GiftCertificateDescriptionLikeSpecification;
 import com.epam.esm.model.repository.specification.GiftCertificateFindAllSpecification;
 import com.epam.esm.model.repository.specification.GiftCertificateNameLikeSpecification;
@@ -59,34 +60,38 @@ public class JpaGiftCertificateDao extends AbstractJpaDao<GiftCertificate> imple
 
     @Override
     public List<GiftCertificate> findAll(String name, String description, String[] tagNames, Pageable pageable) {
-        Specification<GiftCertificate> specification = new GiftCertificateFindAllSpecification();
+        /*Specification<GiftCertificate> specification = new GiftCertificateFindAllSpecification();
         if (name != null) {
             specification = specification.and(new GiftCertificateNameLikeSpecification(name));
         }
         if (description != null) {
             specification = specification.and(new GiftCertificateDescriptionLikeSpecification(description));
         }
+        if (tagNames != null) {
+            specification = specification.and(new GiftCertificateContainsTagNamesSpecification(tagNames));
+        }
 
-        return ((GiftCertificateRepository) jpaRepository).findAll(Specification.where(specification));
+        return ((GiftCertificateRepository) jpaRepository).findAll(Specification.where(specification));*/
 
         /*StringBuilder jpql = new StringBuilder(JPQL_FIND_ALL);
         Map<String, String> parameterMap = new HashMap<>();
         appendName(name, jpql, parameterMap);
         appendDescription(description, jpql, parameterMap);
         appendTagNames(tagNames, jpql, parameterMap);
-        appendOrderBy(sortType, direction, jpql);
+        //appendOrderBy(sortType, direction, jpql);
         TypedQuery<GiftCertificate> query = entityManager.createQuery(jpql.toString(), GiftCertificate.class);
         for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
             query.setParameter(entry.getKey(), entry.getValue());
         }
-        query.setParameter(1, tagNames != null ? (long) tagNames.length : 1L);
+        *//*query.setParameter(1, tagNames != null ? (long) tagNames.length : 1L);
         if (limit != null) {
             query.setMaxResults(limit);
         }
         if (offset != null) {
             query.setFirstResult(offset);
-        }
+        }*//*
         return query.getResultList();*/
+        return null;
     }
 
     /**
