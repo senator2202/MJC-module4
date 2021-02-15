@@ -4,12 +4,14 @@ import com.epam.esm.app.SpringBootRestApplication;
 import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.model.dao.GiftCertificateDao;
 import com.epam.esm.model.entity.GiftCertificate;
+import com.epam.esm.model.repository.GiftCertificateRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
@@ -18,8 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = SpringBootRestApplication.class)
 class JpaGiftCertificateDaoTest {
@@ -27,10 +28,13 @@ class JpaGiftCertificateDaoTest {
     @Autowired
     private GiftCertificateDao giftCertificateDao;
 
+    @Autowired
+    private GiftCertificateRepository giftCertificateRepository;
+
     static Stream<Arguments> argsFindById() {
         return Stream.of(
-                Arguments.of(1L, true),
-                Arguments.of(999L, false)
+                Arguments.of(1L),
+                Arguments.of(999L)
         );
     }
 
@@ -62,7 +66,7 @@ class JpaGiftCertificateDaoTest {
     @ParameterizedTest
     @MethodSource("argsFindById")
     void findById(Long id, boolean result) {
-        Optional<GiftCertificate> optional = giftCertificateDao.findById(id);
+        Optional<GiftCertificate> optional = giftCertificateRepository.findById(id);
         assertEquals(result, optional.isPresent());
     }
 
@@ -91,26 +95,32 @@ class JpaGiftCertificateDaoTest {
         assertEquals(allTags, sorted);
     }*/
 
-    @ParameterizedTest
-    @MethodSource("argsFindById")
+    @Test
     @DirtiesContext
-    void delete(Long id, boolean result) {
-        assertEquals(result, giftCertificateDao.delete(id));
+    void deleteById() {
+        giftCertificateRepository.deleteById(1L);
+        assertFalse(giftCertificateRepository.existsById(1L));
+    }
+
+    @Test
+    @DirtiesContext
+    void deleteByIdNotExisting() {
+        assertThrows(EmptyResultDataAccessException.class, () -> giftCertificateRepository.deleteById(999L));
     }
 
     @Test
     @DirtiesContext
     void add() {
-        GiftCertificate created = giftCertificateDao.add(StaticDataProvider.ADDING_GIFT_CERTIFICATE);
-        Optional<GiftCertificate> optional = giftCertificateDao.findById(created.getId());
+        GiftCertificate created = giftCertificateRepository.save(StaticDataProvider.ADDING_GIFT_CERTIFICATE);
+        Optional<GiftCertificate> optional = giftCertificateRepository.findById(created.getId());
         assertTrue(optional.isPresent() && optional.get().equals(created));
     }
 
     @Test
     @DirtiesContext
     void update() {
-        GiftCertificate updated = giftCertificateDao.update(StaticDataProvider.UPDATING_GIFT_CERTIFICATE);
-        Optional<GiftCertificate> optional = giftCertificateDao.findById(1L);
+        GiftCertificate updated = giftCertificateRepository.save(StaticDataProvider.UPDATING_GIFT_CERTIFICATE);
+        Optional<GiftCertificate> optional = giftCertificateRepository.findById(1L);
         assertTrue(optional.isPresent() && optional.get().equals(updated));
     }
 }

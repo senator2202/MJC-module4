@@ -28,10 +28,5 @@ public interface UserService {
      */
     List<UserDTO> findAll(Integer page, Integer size);
 
-    /**
-     * Most widely used tag of user with highest orders sum optional.
-     *
-     * @return the optional
-     */
-    Optional<TagDTO> mostWidelyUsedTagOfUserWithHighestOrdersSum();
+
 }

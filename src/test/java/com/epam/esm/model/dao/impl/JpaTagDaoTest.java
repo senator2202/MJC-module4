@@ -3,26 +3,30 @@ package com.epam.esm.model.dao.impl;
 import com.epam.esm.app.SpringBootRestApplication;
 import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.entity.Tag;
+import com.epam.esm.model.repository.TagRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = SpringBootRestApplication.class)
 class JpaTagDaoTest {
 
     @Autowired
-    private TagDao tagDao;
+    private TagRepository tagRepository;
 
     static Stream<Arguments> argsFindById() {
         return Stream.of(
@@ -33,10 +37,10 @@ class JpaTagDaoTest {
 
     static Stream<Arguments> argsFindAll() {
         return Stream.of(
-                Arguments.of(null, null, 16),
-                Arguments.of(10, null, 10),
-                Arguments.of(10, 10, 6),
-                Arguments.of(10, 20, 0)
+                Arguments.of(Pageable.unpaged(), 16),
+                Arguments.of(PageRequest.of(0,10), 10),
+                Arguments.of(PageRequest.of(1,10), 6),
+                Arguments.of(PageRequest.of(10,10), 0)
         );
     }
 
@@ -50,44 +54,49 @@ class JpaTagDaoTest {
     @ParameterizedTest
     @MethodSource("argsFindById")
     void findById(Long id, boolean result) {
-        Optional<Tag> optional = tagDao.findById(id);
-        assertEquals(result, optional.isPresent());
+        assertEquals(result, tagRepository.findById(id).isPresent());
     }
 
-    /*@ParameterizedTest
+    @ParameterizedTest
     @MethodSource("argsFindAll")
-    void findAll(Integer limit, Integer offset, int actualSize) {
-        List<Tag> allTags = tagDao.findAll(limit, offset);
-        assertEquals(actualSize, allTags.size());
+    void findAll(Pageable pageable, int actualSize) {
+        Page<Tag> allTags = tagRepository.findAll(pageable);
+        assertEquals(actualSize, allTags.getNumberOfElements());
     }
 
     @Test
     @DirtiesContext
     void add() {
-        tagDao.add(new Tag("NewTag"));
-        List<Tag> allTags = tagDao.findAll(null, null);
-        assertEquals(17, allTags.size());
-    }*/
+        tagRepository.save(new Tag("NewTag"));
+        Page<Tag> allTags = tagRepository.findAll(Pageable.unpaged());
+        assertEquals(17L, allTags.getTotalElements());
+    }
 
     @Test
     @DirtiesContext
     void update() {
-        Tag updated = tagDao.update(new Tag(1L, "Пассивность"));
-        Optional<Tag> optional = tagDao.findById(1L);
+        Tag updated = tagRepository.save(new Tag(1L, "Пассивность"));
+        Optional<Tag> optional = tagRepository.findById(1L);
         assertTrue(optional.isPresent() && optional.get().equals(updated));
     }
 
-    @ParameterizedTest
-    @MethodSource("argsFindById")
+    @Test
     @DirtiesContext
-    void delete(Long id, boolean result) {
-        assertEquals(result, tagDao.delete(id));
+    void deleteByIdExisting() {
+        tagRepository.deleteById(1L);
+        assertFalse(tagRepository.existsById(1L));
+    }
+
+    @Test
+    @DirtiesContext
+    void deleteByIdNotExisting() {
+        assertThrows(EmptyResultDataAccessException.class, () -> tagRepository.deleteById(999L));
     }
 
     @ParameterizedTest
     @MethodSource("argsFindByName")
     void findByName(String name, boolean result) {
-        Optional<Tag> optional = tagDao.findByName(name);
+        Optional<Tag> optional = tagRepository.findByName(name);
         assertEquals(result, optional.isPresent());
     }
 }

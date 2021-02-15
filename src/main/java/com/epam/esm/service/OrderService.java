@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.model.dto.OrderDTO;
+import com.epam.esm.model.dto.TagDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,4 +39,10 @@ public interface OrderService {
      */
     List<OrderDTO> findOrdersByUserId(long userId, Integer page, Integer size);
 
+    /**
+     * Most widely used tag of user with highest orders sum optional.
+     *
+     * @return the optional
+     */
+    Optional<TagDTO> mostWidelyUsedTagOfUserWithHighestOrdersSum();
 }

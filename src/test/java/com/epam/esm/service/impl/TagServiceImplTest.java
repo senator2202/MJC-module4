@@ -3,29 +3,44 @@ package com.epam.esm.service.impl;
 import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.TagDTO;
+import com.epam.esm.model.entity.Tag;
+import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 class TagServiceImplTest {
 
     @Mock
-    private TagDao tagDao;
+    private TagRepository tagRepository;
+
+    @Mock
+    private Page<Tag> tagPage;
 
     @InjectMocks
-    private final TagService service = new TagServiceImpl();
+    private final TagService service = new TagServiceImpl(tagRepository);
 
     @BeforeEach
     void setUp() {
@@ -34,31 +49,34 @@ class TagServiceImplTest {
 
     @Test
     void findByIdExisting() {
-        when(tagDao.findById(1L)).thenReturn(Optional.of(StaticDataProvider.TAG));
+        when(tagRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.TAG));
         Optional<TagDTO> actual = service.findById(1L);
         Optional<TagDTO> expected = Optional.of(StaticDataProvider.TAG_DTO);
         assertEquals(actual, expected);
     }
 
+
+
     @Test
     void findByIdNotExisting() {
-        when(tagDao.findById(11111L)).thenReturn(Optional.empty());
+        when(tagRepository.findById(11111L)).thenReturn(Optional.empty());
         Optional<TagDTO> actual = service.findById(11111L);
         Optional<TagDTO> expected = Optional.empty();
         assertEquals(actual, expected);
     }
 
-    /*@Test
+    @Test
     void findAll() {
-        when(tagDao.findAll(null, null)).thenReturn(StaticDataProvider.TAG_LIST);
-        List<TagDTO> actual = service.findAll(null, null);
-        List<TagDTO> expected = StaticDataProvider.TAG_DTO_LIST;
+        when(tagRepository.findAll(any(Pageable.class))).thenReturn(tagPage);
+        when(tagPage.get()).thenReturn(Collections.nCopies(5, StaticDataProvider.TAG).stream());
+        List<TagDTO> actual = service.findAll(0, 5);
+        List<TagDTO> expected = Collections.nCopies(5, StaticDataProvider.TAG_DTO);
         assertEquals(actual, expected);
-    }*/
+    }
 
     @Test
     void addExisting() {
-        when(tagDao.findByName("Вязание")).thenReturn(Optional.ofNullable(StaticDataProvider.TAG));
+        when(tagRepository.findByName("Вязание")).thenReturn(Optional.of(StaticDataProvider.TAG));
         TagDTO actual = service.add(StaticDataProvider.TAG_DTO);
         TagDTO expected = StaticDataProvider.TAG_DTO;
         assertEquals(actual, expected);
@@ -66,8 +84,8 @@ class TagServiceImplTest {
 
     @Test
     void addNotExisting() {
-        when(tagDao.findByName("Baseball")).thenReturn(Optional.empty());
-        when(tagDao.add(StaticDataProvider.ADDING_TAG)).thenReturn(StaticDataProvider.ADDED_TAG);
+        when(tagRepository.findByName("Baseball")).thenReturn(Optional.empty());
+        when(tagRepository.save(StaticDataProvider.ADDING_TAG)).thenReturn(StaticDataProvider.ADDED_TAG);
         TagDTO actual = service.add(StaticDataProvider.ADDING_TAG_DTO);
         TagDTO expected = StaticDataProvider.ADDED_TAG_DTO;
         assertEquals(actual, expected);
@@ -75,8 +93,8 @@ class TagServiceImplTest {
 
     @Test
     void updateExisting() {
-        when(tagDao.findById(1L)).thenReturn(Optional.of(StaticDataProvider.TAG));
-        when(tagDao.update(StaticDataProvider.TAG)).thenReturn(StaticDataProvider.TAG);
+        when(tagRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.TAG));
+        when(tagRepository.save(StaticDataProvider.TAG)).thenReturn(StaticDataProvider.TAG);
         Optional<TagDTO> actual = service.update(StaticDataProvider.TAG_DTO);
         Optional<TagDTO> expected = Optional.of(StaticDataProvider.TAG_DTO);
         assertEquals(actual, expected);
@@ -84,7 +102,7 @@ class TagServiceImplTest {
 
     @Test
     void updateNotExisting() {
-        when(tagDao.findById(anyLong())).thenReturn(Optional.empty());
+        when(tagRepository.findById(anyLong())).thenReturn(Optional.empty());
         Optional<TagDTO> actual = service.update(StaticDataProvider.ADDED_TAG_DTO);
         Optional<TagDTO> expected = Optional.empty();
         assertEquals(actual, expected);
@@ -92,13 +110,14 @@ class TagServiceImplTest {
 
     @Test
     void deleteTrue() {
-        when(tagDao.delete(1L)).thenReturn(true);
+        when(tagRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(tagRepository).deleteById(1L);
         assertTrue(service.delete(1L));
     }
 
     @Test
     void deleteFalse() {
-        when(tagDao.delete(11111L)).thenReturn(false);
+        when(tagRepository.existsById(1L)).thenReturn(false);
         assertFalse(service.delete(11111L));
     }
 }

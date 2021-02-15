@@ -30,7 +30,7 @@ public class TagServiceImpl implements TagService {
      * @param tagRepository the tag repository
      */
     @Autowired
-    public void setTagRepository(TagRepository tagRepository) {
+    public TagServiceImpl(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
 

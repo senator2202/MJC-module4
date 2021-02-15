@@ -3,8 +3,10 @@ package com.epam.esm.service.impl;
 import com.epam.esm.controller.error_handler.ProjectError;
 import com.epam.esm.controller.exception.ExceptionProvider;
 import com.epam.esm.model.dto.OrderDTO;
+import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
+import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
@@ -13,6 +15,7 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.util.ObjectConverter;
 import com.epam.esm.util.ServiceUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,30 +30,22 @@ import java.util.Optional;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private static final Pageable FIRST_PAGE_SINGLE_RESULT_PAGEABLE = PageRequest.of(0, 1);
+    private static final int FIRST_ELEMENT_INDEX = 0;
+
+    private OrderRepository orderRepository;
+    private UserRepository userRepository;
+    private GiftCertificateRepository giftCertificateRepository;
     private ExceptionProvider exceptionProvider;
 
-    private UserRepository userRepository;
-    private OrderRepository orderRepository;
-    private GiftCertificateRepository giftCertificateRepository;
-
-    @Autowired
-    public void setExceptionProvider(ExceptionProvider exceptionProvider) {
-        this.exceptionProvider = exceptionProvider;
-    }
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setOrderRepository(OrderRepository orderRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            UserRepository userRepository,
+                            GiftCertificateRepository giftCertificateRepository,
+                            ExceptionProvider exceptionProvider) {
         this.orderRepository = orderRepository;
-    }
-
-    @Autowired
-    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
+        this.userRepository = userRepository;
         this.giftCertificateRepository = giftCertificateRepository;
+        this.exceptionProvider = exceptionProvider;
     }
 
     @Override
@@ -82,10 +77,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDTO> findOrdersByUserId(long userId, Integer limit, Integer offset) {
-        Pageable pageable = ServiceUtility.pageable(limit, offset);
+    public List<OrderDTO> findOrdersByUserId(long userId, Integer page, Integer size) {
+        Pageable pageable = ServiceUtility.pageable(page, size);
         List<Order> ordersByUserId = orderRepository.findOrdersByUserId(userId, pageable);
         return ObjectConverter.toOrderDTOs(ordersByUserId);
+    }
+
+    @Override
+    @Transactional
+    public Optional<TagDTO> mostWidelyUsedTagOfUserWithHighestOrdersSum() {
+        Long userId = orderRepository.findUsersWithHighestOrderSum(FIRST_PAGE_SINGLE_RESULT_PAGEABLE)
+                .get(FIRST_ELEMENT_INDEX).getId();
+        Tag tag = orderRepository.findMostPopularTagsOfUser(userId, FIRST_PAGE_SINGLE_RESULT_PAGEABLE)
+                .get(FIRST_ELEMENT_INDEX);
+        return Optional.ofNullable(tag).map(ObjectConverter::toTagDTO);
     }
 
 }

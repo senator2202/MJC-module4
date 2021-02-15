@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.controller.error_handler.ProjectError;
 import com.epam.esm.controller.exception.ExceptionProvider;
 import com.epam.esm.controller.exception.GiftEntityNotFoundException;
 import com.epam.esm.data_provider.StaticDataProvider;
@@ -7,38 +8,45 @@ import com.epam.esm.model.dao.GiftCertificateDao;
 import com.epam.esm.model.dao.OrderDao;
 import com.epam.esm.model.dao.UserDao;
 import com.epam.esm.model.dto.OrderDTO;
+import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Order;
+import com.epam.esm.model.repository.GiftCertificateRepository;
+import com.epam.esm.model.repository.OrderRepository;
+import com.epam.esm.model.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 class OrderServiceImplTest {
 
     @Mock
-    private OrderDao orderDao;
+    private UserRepository userRepository;
 
     @Mock
-    private UserDao userDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private GiftCertificateDao giftCertificateDao;
+    private GiftCertificateRepository giftCertificateRepository;
 
     @Mock
     private ExceptionProvider exceptionProvider;
 
     @InjectMocks
-    private final OrderService service = new OrderServiceImpl();
+    private final OrderService service = new OrderServiceImpl(orderRepository, userRepository,
+            giftCertificateRepository, exceptionProvider);
 
     @BeforeEach
     void setUp() {
@@ -47,9 +55,9 @@ class OrderServiceImplTest {
 
     @Test
     void addExistingUserExistingCertificate() {
-        when(userDao.findById(1L)).thenReturn(Optional.of(StaticDataProvider.USER));
-        when(giftCertificateDao.findById(1L)).thenReturn(Optional.of(StaticDataProvider.GIFT_CERTIFICATE));
-        when(orderDao.add(any(Order.class))).thenReturn(StaticDataProvider.ORDER);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.USER));
+        when(giftCertificateRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.GIFT_CERTIFICATE));
+        when(orderRepository.save(any(Order.class))).thenReturn(StaticDataProvider.ORDER);
         OrderDTO actual = service.add(1L, 1L);
         OrderDTO expected = StaticDataProvider.ORDER_DTO;
         assertEquals(actual, expected);
@@ -57,45 +65,55 @@ class OrderServiceImplTest {
 
     @Test
     void addUserNotExisting() {
-        when(userDao.findById(11111L)).thenThrow(GiftEntityNotFoundException.class);
+        when(exceptionProvider.giftEntityNotFoundException(any(ProjectError.class)))
+                .thenReturn(new GiftEntityNotFoundException("", 1));
+        when(userRepository.findById(11111L)).thenReturn(Optional.empty());
         assertThrows(GiftEntityNotFoundException.class, () -> service.add(11111L, 1L));
     }
 
     @Test
     void addCertificateNotExisting() {
-        when(userDao.findById(1L)).thenReturn(Optional.of(StaticDataProvider.USER));
-        when(giftCertificateDao.findById(11111L)).thenThrow(GiftEntityNotFoundException.class);
+        when(exceptionProvider.giftEntityNotFoundException(any(ProjectError.class)))
+                .thenReturn(new GiftEntityNotFoundException("", 1));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.USER));
+        when(giftCertificateRepository.findById(11111L)).thenReturn(Optional.empty());
         assertThrows(GiftEntityNotFoundException.class, () -> service.add(1L, 11111L));
     }
 
     @Test
     void findByIdExisting() {
-        when(userDao.findById(1L)).thenReturn(Optional.of(StaticDataProvider.USER));
-        when(orderDao.findById(1L)).thenReturn(Optional.of(StaticDataProvider.ORDER));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.USER));
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.ORDER));
         Optional<OrderDTO> actual = service.findUserOrderById(1L, 1L);
         Optional<OrderDTO> expected = Optional.of(StaticDataProvider.ORDER_DTO);
         assertEquals(actual, expected);
     }
 
     @Test
-    void findByIdUserNotExisting() {
-        when(userDao.findById(11111L)).thenThrow(GiftEntityNotFoundException.class);
+    void findUserOrderByIdNotExisting() {
+        when(userRepository.findById(11111L)).thenReturn(Optional.empty());
+        when(exceptionProvider.giftEntityNotFoundException(any(ProjectError.class)))
+                .thenReturn(new GiftEntityNotFoundException("", 1));
         assertThrows(GiftEntityNotFoundException.class, () -> service.findUserOrderById(11111L, 1L));
     }
 
     @Test
-    void findOrdersByUserIdLimit() {
-        when(orderDao.findOrdersByUserId(1L, 2, 0)).thenReturn(StaticDataProvider.ORDER_LIST_LIMIT);
-        List<OrderDTO> actual = service.findOrdersByUserId(1L, 2, 0);
-        List<OrderDTO> expected = StaticDataProvider.ORDER_DTO_LIST_LIMIT;
+    void findOrdersByUserId() {
+        when(orderRepository.findOrdersByUserId(anyLong(), any(Pageable.class)))
+                .thenReturn(Collections.nCopies(5, StaticDataProvider.ORDER));
+        List<OrderDTO> actual = service.findOrdersByUserId(1L, 2, 5);
+        List<OrderDTO> expected = Collections.nCopies(5, StaticDataProvider.ORDER_DTO);
         assertEquals(actual, expected);
     }
 
     @Test
-    void findOrdersByUserIdLimitOffset() {
-        when(orderDao.findOrdersByUserId(1L, 2, 10)).thenReturn(StaticDataProvider.ORDER_LIST_LIMIT);
-        List<OrderDTO> actual = service.findOrdersByUserId(1L, 2, 10);
-        List<OrderDTO> expected = StaticDataProvider.ORDER_DTO_LIST_LIMIT;
+    void mostWidelyUsedTagOfUserWithHighestOrdersSum() {
+        when(orderRepository.findUsersWithHighestOrderSum(any(Pageable.class)))
+                .thenReturn(StaticDataProvider.USER_LIST);
+        when(orderRepository.findMostPopularTagsOfUser(anyLong(), any(Pageable.class)))
+                .thenReturn(StaticDataProvider.TAG_LIST);
+        Optional<TagDTO> actual = service.mostWidelyUsedTagOfUserWithHighestOrdersSum();
+        Optional<TagDTO> expected = Optional.of(StaticDataProvider.TAG_DTO);
         assertEquals(actual, expected);
     }
 }

@@ -37,17 +37,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private TagRepository tagRepository;
 
     @Autowired
-    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
+    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository,
+                                      OrderRepository orderRepository,
+                                      TagRepository tagRepository) {
         this.giftCertificateRepository = giftCertificateRepository;
-    }
-
-    @Autowired
-    public void setOrderRepository(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-    }
-
-    @Autowired
-    public void setTagRepository(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
 
@@ -59,6 +53,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificateDTO> findAll(String name, String description, String tagNames,
                                             String sortType, String direction, Integer page, Integer size) {
+        BooleanExpression filterExpression = getBooleanExpression(name, description, tagNames);
+        Pageable pageable = ServiceUtility.pageableWithSort(page, size, toCamelCase(sortType), direction);
+        return giftCertificateRepository.findAll(filterExpression, pageable).get()
+                .map(ObjectConverter::toGiftCertificateDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Method returns BooleanExpression (QueryDsl predicate), according to input parameters
+     *
+     * @param name        the name
+     * @param description the description
+     * @param tagNames    the tag names
+     * @return the boolean expression
+     */
+    private BooleanExpression getBooleanExpression(String name, String description, String tagNames) {
         QGiftCertificate certificateModel = QGiftCertificate.giftCertificate;
         BooleanExpression filterExpression = certificateModel.isNotNull();
         if (name != null) {
@@ -73,14 +83,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 filterExpression = filterExpression.and(certificateModel.tags.any().name.eq(s));
             }
         }
-        Pageable pageable = ServiceUtility.pageableWithSort(page, size, toCamelCase(sortType), direction);
-        return giftCertificateRepository.findAll(filterExpression, pageable).get()
-                .map(ObjectConverter::toGiftCertificateDTO)
-                .collect(Collectors.toList());
+        return filterExpression;
     }
 
     /**
      * Method returns source string in camel case format
+     *
+     * @param source        the name
+     * @return the modified source String
      */
     private String toCamelCase(String source) {
         if (source != null) {

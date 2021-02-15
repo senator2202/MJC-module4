@@ -151,7 +151,7 @@ public class UserApiController {
      */
     @GetMapping("/widely-used-tag")
     public TagDTO widelyUsedTag() {
-        TagDTO tag = userService.mostWidelyUsedTagOfUserWithHighestOrdersSum().orElseThrow(
+        TagDTO tag = orderService.mostWidelyUsedTagOfUserWithHighestOrdersSum().orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)
         );
         return TagApiController.addLinks(tag);
