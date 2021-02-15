@@ -1,8 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.data_provider.StaticDataProvider;
-import com.epam.esm.model.dao.GiftCertificateDao;
-import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.repository.GiftCertificateRepository;
@@ -12,9 +10,6 @@ import com.epam.esm.service.GiftCertificateService;
 import com.querydsl.core.types.Predicate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -24,9 +19,10 @@ import org.springframework.data.domain.Pageable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -41,13 +37,11 @@ class GiftCertificateServiceImplTest {
 
     @Mock
     private TagRepository tagRepository;
-
-    @Mock
-    private Page<GiftCertificate> page;
-
     @InjectMocks
     private final GiftCertificateService service = new GiftCertificateServiceImpl(giftCertificateRepository,
             orderRepository, tagRepository);
+    @Mock
+    private Page<GiftCertificate> page;
 
     @BeforeEach
     void setUp() {
@@ -73,7 +67,7 @@ class GiftCertificateServiceImplTest {
     @Test
     void findAll() {
         when(giftCertificateRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(page);
-        when(page.get()).thenReturn(Collections.nCopies(5, StaticDataProvider.GIFT_CERTIFICATE).stream());
+        when(page.getContent()).thenReturn(Collections.nCopies(5, StaticDataProvider.GIFT_CERTIFICATE));
         List<GiftCertificateDTO> actual =
                 service.findAll("Certificate", "Good certificate", "TagA,TagB", "price", "asc", 0, 5);
         List<GiftCertificateDTO> expected = Collections.nCopies(5, StaticDataProvider.GIFT_CERTIFICATE_DTO);

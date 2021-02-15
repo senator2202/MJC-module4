@@ -1,8 +1,7 @@
-package com.epam.esm.model.dao.impl;
+package com.epam.esm.model.repository;
 
 import com.epam.esm.app.SpringBootRestApplication;
 import com.epam.esm.model.entity.User;
-import com.epam.esm.model.repository.UserRepository;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,7 +16,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = SpringBootRestApplication.class)
-class JpaUserDaoTest {
+class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
@@ -34,7 +33,7 @@ class JpaUserDaoTest {
                 Arguments.of(Pageable.unpaged(), 6),
                 Arguments.of(PageRequest.of(0, 3), 3),
                 Arguments.of(PageRequest.of(2, 2), 2),
-                Arguments.of(PageRequest.of(10,10), 0)
+                Arguments.of(PageRequest.of(10, 10), 0)
         );
     }
 

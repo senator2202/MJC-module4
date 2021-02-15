@@ -2,18 +2,18 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.entity.GiftCertificate;
-import com.epam.esm.model.entity.QGiftCertificate;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
 import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.util.GiftCertificateExpressionProvider;
 import com.epam.esm.util.ObjectConverter;
 import com.epam.esm.util.ServiceUtility;
-import com.epam.esm.validator.GiftEntityValidator;
 import com.google.common.base.CaseFormat;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The type Gift certificate service.
@@ -53,43 +52,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificateDTO> findAll(String name, String description, String tagNames,
                                             String sortType, String direction, Integer page, Integer size) {
-        BooleanExpression filterExpression = getBooleanExpression(name, description, tagNames);
+        BooleanExpression filterExpression =
+                GiftCertificateExpressionProvider.getBooleanExpression(name, description, tagNames);
         Pageable pageable = ServiceUtility.pageableWithSort(page, size, toCamelCase(sortType), direction);
-        return giftCertificateRepository.findAll(filterExpression, pageable).get()
-                .map(ObjectConverter::toGiftCertificateDTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Method returns BooleanExpression (QueryDsl predicate), according to input parameters
-     *
-     * @param name        the name
-     * @param description the description
-     * @param tagNames    the tag names
-     * @return the boolean expression
-     */
-    private BooleanExpression getBooleanExpression(String name, String description, String tagNames) {
-        QGiftCertificate certificateModel = QGiftCertificate.giftCertificate;
-        BooleanExpression filterExpression = certificateModel.isNotNull();
-        if (name != null) {
-            filterExpression = filterExpression.and(certificateModel.name.containsIgnoreCase(name));
-        }
-        if (description != null) {
-            filterExpression = filterExpression.and(certificateModel.description.containsIgnoreCase(description));
-        }
-        if (tagNames != null) {
-            String[] tagArray = tagNames.split(GiftEntityValidator.TAG_SPLITERATOR);
-            for (String s : tagArray) {
-                filterExpression = filterExpression.and(certificateModel.tags.any().name.eq(s));
-            }
-        }
-        return filterExpression;
+        Page<GiftCertificate> giftCertificatePage = giftCertificateRepository.findAll(filterExpression, pageable);
+        return ObjectConverter.toGiftCertificateDTOs(giftCertificatePage.getContent());
     }
 
     /**
      * Method returns source string in camel case format
      *
-     * @param source        the name
+     * @param source the name
      * @return the modified source String
      */
     private String toCamelCase(String source) {

@@ -1,27 +1,21 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.data_provider.StaticDataProvider;
-import com.epam.esm.model.dao.TagDao;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -35,12 +29,10 @@ class TagServiceImplTest {
 
     @Mock
     private TagRepository tagRepository;
-
-    @Mock
-    private Page<Tag> tagPage;
-
     @InjectMocks
     private final TagService service = new TagServiceImpl(tagRepository);
+    @Mock
+    private Page<Tag> tagPage;
 
     @BeforeEach
     void setUp() {
@@ -55,8 +47,6 @@ class TagServiceImplTest {
         assertEquals(actual, expected);
     }
 
-
-
     @Test
     void findByIdNotExisting() {
         when(tagRepository.findById(11111L)).thenReturn(Optional.empty());
@@ -68,7 +58,7 @@ class TagServiceImplTest {
     @Test
     void findAll() {
         when(tagRepository.findAll(any(Pageable.class))).thenReturn(tagPage);
-        when(tagPage.get()).thenReturn(Collections.nCopies(5, StaticDataProvider.TAG).stream());
+        when(tagPage.getContent()).thenReturn(Collections.nCopies(5, StaticDataProvider.TAG));
         List<TagDTO> actual = service.findAll(0, 5);
         List<TagDTO> expected = Collections.nCopies(5, StaticDataProvider.TAG_DTO);
         assertEquals(actual, expected);

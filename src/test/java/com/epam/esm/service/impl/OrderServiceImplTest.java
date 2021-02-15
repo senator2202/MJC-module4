@@ -4,9 +4,6 @@ import com.epam.esm.controller.error_handler.ProjectError;
 import com.epam.esm.controller.exception.ExceptionProvider;
 import com.epam.esm.controller.exception.GiftEntityNotFoundException;
 import com.epam.esm.data_provider.StaticDataProvider;
-import com.epam.esm.model.dao.GiftCertificateDao;
-import com.epam.esm.model.dao.OrderDao;
-import com.epam.esm.model.dao.UserDao;
 import com.epam.esm.model.dto.OrderDTO;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Order;
@@ -27,7 +24,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 class OrderServiceImplTest {

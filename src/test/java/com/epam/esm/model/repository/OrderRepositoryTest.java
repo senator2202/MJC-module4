@@ -1,9 +1,8 @@
-package com.epam.esm.model.dao.impl;
+package com.epam.esm.model.repository;
 
 import com.epam.esm.app.SpringBootRestApplication;
 import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.model.entity.Order;
-import com.epam.esm.model.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -22,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = SpringBootRestApplication.class)
-class JpaOrderDaoTest {
+class OrderRepositoryTest {
 
     @Autowired
     private OrderRepository orderRepository;

@@ -7,6 +7,7 @@ import com.epam.esm.service.TagService;
 import com.epam.esm.util.ObjectConverter;
 import com.epam.esm.util.ServiceUtility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The type Tag service.
@@ -42,9 +42,8 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDTO> findAll(Integer page, Integer size) {
         Pageable pageable = ServiceUtility.pageable(page, size);
-        return tagRepository.findAll(pageable).get()
-                .map(ObjectConverter::toTagDTO)
-                .collect(Collectors.toList());
+        Page<Tag> tagPage = tagRepository.findAll(pageable);
+        return ObjectConverter.toTagDTOs(tagPage.getContent());
     }
 
     @Override

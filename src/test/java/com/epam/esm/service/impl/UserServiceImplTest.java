@@ -1,10 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.data_provider.StaticDataProvider;
-import com.epam.esm.model.dao.OrderDao;
-import com.epam.esm.model.dao.TagDao;
-import com.epam.esm.model.dao.UserDao;
-import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.dto.UserDTO;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.repository.UserRepository;
@@ -29,12 +25,10 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private Page<User> userPage;
-
     @InjectMocks
     private final UserService service = new UserServiceImpl(userRepository);
+    @Mock
+    private Page<User> userPage;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +54,7 @@ class UserServiceImplTest {
     @Test
     void findAll() {
         when(userRepository.findAll(any(Pageable.class))).thenReturn(userPage);
-        when(userPage.get()).thenReturn(Collections.nCopies(5, StaticDataProvider.USER).stream());
+        when(userPage.getContent()).thenReturn(Collections.nCopies(5, StaticDataProvider.USER));
         List<UserDTO> actual = service.findAll(0, 5);
         List<UserDTO> expected = Collections.nCopies(5, StaticDataProvider.USER_DTO);
         assertEquals(actual, expected);

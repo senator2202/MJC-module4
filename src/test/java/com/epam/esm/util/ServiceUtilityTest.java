@@ -8,13 +8,38 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ServiceUtilityTest {
+
+    static Stream<Arguments> argsPageableWithSort() {
+        return Stream.of(
+                Arguments.of(null, null, null, null, PageRequest.of(0, Integer.MAX_VALUE)),
+                Arguments.of(10, null, null, null, PageRequest.of(10, Integer.MAX_VALUE)),
+                Arguments.of(null, null, "price", null,
+                        PageRequest.of(0, Integer.MAX_VALUE, Sort.by(Sort.Direction.ASC, "price"))),
+                Arguments.of(null, null, null, "asc", PageRequest.of(0, Integer.MAX_VALUE)),
+                Arguments.of(null, 10, null, null, PageRequest.of(0, 10)),
+                Arguments.of(null, 10, "duration", null,
+                        PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "duration"))),
+                Arguments.of(null, 10, "createDate", "desc",
+                        PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createDate"))),
+                Arguments.of(2, 10, "lastUpdateDate", "asc",
+                        PageRequest.of(2, 10, Sort.by(Sort.Direction.ASC, "lastUpdateDate"))),
+                Arguments.of(2, 10, null, null, PageRequest.of(2, 10))
+        );
+    }
+
+    static Stream<Arguments> argsPageable() {
+        return Stream.of(
+                Arguments.of(null, null, Pageable.unpaged()),
+                Arguments.of(null, 10, PageRequest.of(0, 10)),
+                Arguments.of(2, 10, PageRequest.of(2, 10))
+        );
+    }
 
     @Test
     void getCurrentDateIso() {
@@ -24,40 +49,13 @@ class ServiceUtilityTest {
 
     @ParameterizedTest
     @MethodSource("argsPageableWithSort")
-    void pageableWithSort(Integer page, Integer size, String sort, String direction, Optional<Pageable> result) {
+    void pageableWithSort(Integer page, Integer size, String sort, String direction, Pageable result) {
         assertEquals(result, ServiceUtility.pageableWithSort(page, size, sort, direction));
-    }
-
-    static Stream<Arguments> argsPageableWithSort() {
-        return Stream.of(
-                Arguments.of(null, null, null, null, Optional.empty()),
-                Arguments.of(10, null, null, null, Optional.empty()),
-                Arguments.of(null, null, "price", null, Optional.empty()),
-                Arguments.of(null, null, null, "asc", Optional.empty()),
-                Arguments.of(null, 10, null, null, Optional.of(PageRequest.of(0,10))),
-                Arguments.of(null, 10, "price", null,
-                        Optional.of(PageRequest.of(0,10, Sort.by(Sort.Direction.ASC, "price")))),
-                Arguments.of(null, 10, "price", "desc",
-                        Optional.of(PageRequest.of(0,10, Sort.by(Sort.Direction.DESC, "price")))),
-                Arguments.of(null, 10, "price", "asc",
-                        Optional.of(PageRequest.of(0,10, Sort.by(Sort.Direction.ASC, "price")))),
-                Arguments.of(2, 10, "price", "desc",
-                        Optional.of(PageRequest.of(2,10, Sort.by(Sort.Direction.DESC, "price")))),
-                Arguments.of(2, 10, null, null, Optional.of(PageRequest.of(2,10)))
-        );
     }
 
     @ParameterizedTest
     @MethodSource("argsPageable")
-    void pageable(Integer page, Integer size, Optional<Pageable> result) {
+    void pageable(Integer page, Integer size, Pageable result) {
         assertEquals(result, ServiceUtility.pageable(page, size));
-    }
-
-    static Stream<Arguments> argsPageable() {
-        return Stream.of(
-                Arguments.of(null, null, Optional.empty()),
-                Arguments.of(null, 10, Optional.of(PageRequest.of(0, 10))),
-                Arguments.of(2, 10, Optional.of(PageRequest.of(2, 10)))
-        );
     }
 }
