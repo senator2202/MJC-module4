@@ -9,6 +9,10 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -155,6 +159,20 @@ public class UserApiController {
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)
         );
         return TagApiController.addLinks(tag);
+    }
+
+    @Autowired
+    private JdbcUserDetailsManager jdbcUserDetailsManager;
+
+    @PostMapping
+    public boolean registerUser(@RequestBody UserRegistrationData data) {
+        UserDetails user = User.builder()
+                .username(data.getUserName())
+                .password(new BCryptPasswordEncoder(12).encode(data.getPassword()))
+                .roles("USER")
+                .build();
+        jdbcUserDetailsManager.createUser(user);
+        return true;
     }
 
     /**
