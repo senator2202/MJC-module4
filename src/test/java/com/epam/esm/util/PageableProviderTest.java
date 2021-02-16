@@ -1,6 +1,5 @@
 package com.epam.esm.util;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,9 +10,8 @@ import org.springframework.data.domain.Sort;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ServiceUtilityTest {
+class PageableProviderTest {
 
     static Stream<Arguments> argsPageableWithSort() {
         return Stream.of(
@@ -41,21 +39,15 @@ class ServiceUtilityTest {
         );
     }
 
-    @Test
-    void getCurrentDateIso() {
-        String regex = "^202\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d.\\d+$";
-        assertTrue(ServiceUtility.getCurrentDateIso().matches(regex));
-    }
-
     @ParameterizedTest
     @MethodSource("argsPageableWithSort")
     void pageableWithSort(Integer page, Integer size, String sort, String direction, Pageable result) {
-        assertEquals(result, ServiceUtility.pageableWithSort(page, size, sort, direction));
+        assertEquals(result, PageableProvider.pageableWithSort(page, size, sort, direction));
     }
 
     @ParameterizedTest
     @MethodSource("argsPageable")
     void pageable(Integer page, Integer size, Pageable result) {
-        assertEquals(result, ServiceUtility.pageable(page, size));
+        assertEquals(result, PageableProvider.pageable(page, size));
     }
 }

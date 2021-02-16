@@ -4,24 +4,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+public class PageableProvider {
 
-/**
- * Utility class, consists of methods, working with date and time.
- */
-public class ServiceUtility {
-
-    private ServiceUtility() {
-    }
-
-    /**
-     * Gets current date iso.
-     *
-     * @return the current date iso
-     */
-    public static String getCurrentDateIso() {
-        return LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    private PageableProvider() {
     }
 
     /**

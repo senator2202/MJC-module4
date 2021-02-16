@@ -5,7 +5,7 @@ import com.epam.esm.model.entity.User;
 import com.epam.esm.model.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.ObjectConverter;
-import com.epam.esm.util.ServiceUtility;
+import com.epam.esm.util.PageableProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findAll(Integer page, Integer size) {
-        Pageable pageable = ServiceUtility.pageable(page, size);
+        Pageable pageable = PageableProvider.pageable(page, size);
         Page<User> userPage = userRepository.findAll(pageable);
         return ObjectConverter.toUserDTOs(userPage.getContent());
     }

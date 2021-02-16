@@ -5,7 +5,7 @@ import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.ObjectConverter;
-import com.epam.esm.util.ServiceUtility;
+import com.epam.esm.util.PageableProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +41,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagDTO> findAll(Integer page, Integer size) {
-        Pageable pageable = ServiceUtility.pageable(page, size);
+        Pageable pageable = PageableProvider.pageable(page, size);
         Page<Tag> tagPage = tagRepository.findAll(pageable);
         return ObjectConverter.toTagDTOs(tagPage.getContent());
     }

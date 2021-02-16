@@ -12,8 +12,9 @@ import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
 import com.epam.esm.model.repository.UserRepository;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.util.DateTimeUtility;
 import com.epam.esm.util.ObjectConverter;
-import com.epam.esm.util.ServiceUtility;
+import com.epam.esm.util.PageableProvider;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setUser(user);
         orderEntity.setGiftCertificate(giftCertificate);
         orderEntity.setCost(giftCertificate.getPrice());
-        orderEntity.setOrderDate(ServiceUtility.getCurrentDateIso());
+        orderEntity.setOrderDate(DateTimeUtility.getCurrentDateIso());
         return ObjectConverter.toOrderDTO(orderRepository.save(orderEntity));
     }
 
@@ -77,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDTO> findOrdersByUserId(long userId, Integer page, Integer size) {
-        Pageable pageable = ServiceUtility.pageable(page, size);
+        Pageable pageable = PageableProvider.pageable(page, size);
         List<Order> ordersByUserId = orderRepository.findOrdersByUserId(userId, pageable);
         return ObjectConverter.toOrderDTOs(ordersByUserId);
     }

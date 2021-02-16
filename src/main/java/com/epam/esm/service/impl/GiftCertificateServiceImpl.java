@@ -7,9 +7,10 @@ import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.OrderRepository;
 import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.util.DateTimeUtility;
 import com.epam.esm.util.GiftCertificateExpressionProvider;
 import com.epam.esm.util.ObjectConverter;
-import com.epam.esm.util.ServiceUtility;
+import com.epam.esm.util.PageableProvider;
 import com.google.common.base.CaseFormat;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                                             String sortType, String direction, Integer page, Integer size) {
         BooleanExpression filterExpression =
                 GiftCertificateExpressionProvider.getBooleanExpression(name, description, tagNames);
-        Pageable pageable = ServiceUtility.pageableWithSort(page, size, toCamelCase(sortType), direction);
+        Pageable pageable = PageableProvider.pageableWithSort(page, size, toCamelCase(sortType), direction);
         Page<GiftCertificate> giftCertificatePage = giftCertificateRepository.findAll(filterExpression, pageable);
         return ObjectConverter.toGiftCertificateDTOs(giftCertificatePage.getContent());
     }
@@ -76,7 +77,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateDTO add(GiftCertificateDTO certificate) {
-        String currentDate = ServiceUtility.getCurrentDateIso();
+        String currentDate = DateTimeUtility.getCurrentDateIso();
         certificate.setCreateDate(currentDate);
         certificate.setLastUpdateDate(currentDate);
         GiftCertificate entity = ObjectConverter.toGiftCertificateEntity(certificate);
@@ -91,7 +92,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (optional.isPresent()) {
             GiftCertificate found = optional.get();
             updateNotEmptyFields(certificate, found);
-            found.setLastUpdateDate(ServiceUtility.getCurrentDateIso());
+            found.setLastUpdateDate(DateTimeUtility.getCurrentDateIso());
             GiftCertificate updated = giftCertificateRepository.save(found);
             optional = Optional.of(updated);
         }
