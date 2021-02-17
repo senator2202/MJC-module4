@@ -1,5 +1,6 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.dto.TagDTO;
 
@@ -13,12 +14,10 @@ import java.util.Objects;
  */
 public class GiftEntityValidator {
 
-    /**
-     * The constant TAG_SPLITERATOR.
-     */
     public static final String TAG_SPLITERATOR = ",";
     private static final String ID_REGEX = "^[1-9]\\d{0,18}$";
-    private static final String NAME_REGEX = "^.{1,50}$";
+    private static final String NAME_REGEX = "^.{3,50}$";
+    private static final String PASSWORD_REGEX = NAME_REGEX;
     private static final String CERTIFICATE_DESCRIPTION_REGEX = "^.{1,250}$";
     private static final String POSITIVE_INT_REGEX = "^[1-9]\\d{0,9}$";
     private static final String PRICE = "price";
@@ -210,11 +209,35 @@ public class GiftEntityValidator {
         return tags == null || tags.stream().filter(Objects::nonNull).allMatch(GiftEntityValidator::correctTag);
     }
 
+    /**
+     * Method checks for correct gift certificate optional parameters.
+     *
+     * @param certificate the certificate
+     * @return the boolean
+     */
     public static boolean correctGiftCertificateOptional(GiftCertificateDTO certificate) {
         return correctOptionalCertificateName(certificate.getName()) &&
                 correctOptionalDescription(certificate.getDescription()) &&
                 correctOptionalPrice(certificate.getPrice()) &&
                 correctOptionalDuration(certificate.getDuration()) &&
                 correctTags(certificate.getTags());
+    }
+
+    /**
+     * Method checks for correct user registration data.
+     *
+     * @param data the data
+     * @return the boolean
+     */
+    public static boolean correctUserRegistrationData(UserRegistrationDTO data) {
+        if (data.getName() == null || !data.getName().matches(NAME_REGEX)) {
+            return false;
+        }
+        if (data.getUserName() == null || !data.getUserName().matches(NAME_REGEX)) {
+            return false;
+        }
+        return data.getPassword() != null
+                && data.getPassword().matches(PASSWORD_REGEX)
+                && data.getPassword().equals(data.getPasswordRepeat());
     }
 }

@@ -1,11 +1,13 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.controller.error_handler.ProjectError;
-import com.epam.esm.controller.exception.ExceptionProvider;
+import com.epam.esm.exception.ExceptionProvider;
+import com.epam.esm.model.dto.DeleteResultDTO;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -92,6 +94,7 @@ public class GiftCertificateApiController {
      * @return the list
      */
     @GetMapping
+    @PreAuthorize("permitAll()")
     public List<GiftCertificateDTO> findAll(@RequestParam(required = false) String name,
                                             @RequestParam(required = false) String description,
                                             @RequestParam(value = "tags", required = false) String tagNames,
@@ -117,6 +120,7 @@ public class GiftCertificateApiController {
      * @return the gift certificate dto
      */
     @GetMapping("/{id:^[1-9]\\d{0,18}$}")
+    @PreAuthorize("permitAll()")
     public GiftCertificateDTO findById(@PathVariable long id) {
         GiftCertificateDTO giftCertificate = service.findById(id)
                 .orElseThrow(
@@ -132,6 +136,7 @@ public class GiftCertificateApiController {
      * @return the gift certificate dto
      */
     @PostMapping
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).ADD_CERTIFICATES)")
     public GiftCertificateDTO create(@RequestBody GiftCertificateDTO certificate) {
         if (!GiftEntityValidator.correctGiftCertificate(certificate)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.CERTIFICATE_WRONG_PARAMETERS);
@@ -148,6 +153,7 @@ public class GiftCertificateApiController {
      * @return the gift certificate dto
      */
     @PatchMapping("/{id:^[1-9]\\d{0,18}$}")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).UPDATE_CERTIFICATES)")
     public GiftCertificateDTO update(@RequestBody GiftCertificateDTO certificate, @PathVariable long id) {
         if (!GiftEntityValidator.correctGiftCertificateOptional(certificate)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.CERTIFICATE_WRONG_PARAMETERS);
@@ -165,8 +171,9 @@ public class GiftCertificateApiController {
      * @return the delete result
      */
     @DeleteMapping("/{id:^[1-9]\\d{0,18}$}")
-    public DeleteResult delete(@PathVariable long id) {
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).DELETE_CERTIFICATES)")
+    public DeleteResultDTO delete(@PathVariable long id) {
         boolean result = service.delete(id);
-        return new DeleteResult(result);
+        return new DeleteResultDTO(result);
     }
 }

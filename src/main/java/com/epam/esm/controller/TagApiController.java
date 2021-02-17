@@ -1,11 +1,13 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.controller.error_handler.ProjectError;
-import com.epam.esm.controller.exception.ExceptionProvider;
+import com.epam.esm.exception.ExceptionProvider;
+import com.epam.esm.model.dto.DeleteResultDTO;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,6 +81,7 @@ public class TagApiController {
      * @return the list
      */
     @GetMapping
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
     public List<TagDTO> findAll(@RequestParam(required = false) Integer page,
                                 @RequestParam(required = false) Integer size) {
         List<TagDTO> tags = service.findAll(page, size);
@@ -94,6 +97,7 @@ public class TagApiController {
      * @return the tag dto
      */
     @GetMapping("/{id:^[1-9]\\d{0,18}$}")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
     public TagDTO findById(@PathVariable long id) {
         TagDTO tag = service.findById(id).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)
@@ -108,6 +112,7 @@ public class TagApiController {
      * @return the tag dto
      */
     @PostMapping
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).ADD_TAGS)")
     public TagDTO create(@RequestBody TagDTO tag) {
         if (!GiftEntityValidator.correctTag(tag)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.TAG_WRONG_PARAMETERS);
@@ -123,6 +128,7 @@ public class TagApiController {
      * @return the tag dto
      */
     @PutMapping("/{id:^[1-9]\\d{0,18}$}")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).UPDATE_TAGS)")
     public TagDTO update(@RequestBody TagDTO tag, @PathVariable long id) {
         if (!GiftEntityValidator.correctTag(tag)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.TAG_WRONG_PARAMETERS);
@@ -141,8 +147,9 @@ public class TagApiController {
      * @return the delete result
      */
     @DeleteMapping("/{id:^[1-9]\\d{0,18}$}")
-    public DeleteResult delete(@PathVariable int id) {
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).DELETE_TAGS)")
+    public DeleteResultDTO delete(@PathVariable int id) {
         boolean result = service.delete(id);
-        return new DeleteResult(result);
+        return new DeleteResultDTO(result);
     }
 }

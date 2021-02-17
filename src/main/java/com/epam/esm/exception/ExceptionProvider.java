@@ -1,4 +1,4 @@
-package com.epam.esm.controller.exception;
+package com.epam.esm.exception;
 
 import com.epam.esm.controller.error_handler.ProjectError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +51,17 @@ public class ExceptionProvider {
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(error.getMessageKey(), null, locale);
         return new GiftEntityNotFoundException(message, error.getErrorCode());
+    }
+
+    /**
+     * Method returns UserNameAlreadyExistsException with localized message
+     *
+     * @param error the error
+     * @return the UserNameAlreadyExistsException
+     */
+    public UserNameAlreadyExistsException userNameAlreadyExistsException(ProjectError error) {
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage(error.getMessageKey(), null, locale);
+        return new UserNameAlreadyExistsException(message, error.getErrorCode());
     }
 }

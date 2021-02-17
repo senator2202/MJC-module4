@@ -1,66 +1,57 @@
 package com.epam.esm.config;
 
+import com.epam.esm.controller.security.JwtConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
-import javax.sql.DataSource;
-
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final int ENCRYPTION_STRENGTH = 12;
+    private JwtConfigurer jwtConfigurer;
+
+    @Autowired
+    public void setJwtConfigurer(JwtConfigurer jwtConfigurer) {
+        this.jwtConfigurer = jwtConfigurer;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/tags/**").hasRole("USER")
-                .antMatchers(HttpMethod.GET, "/api/certificates/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/certificates/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/users/**").anonymous()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .httpBasic();
+                .authorizeRequests()
+                .antMatchers("/api/auth/login").permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .apply(jwtConfigurer);
     }
 
+    @Override
     @Bean
-    public JdbcUserDetailsManager userDetailsManager(DataSource dataSource) {
-        UserDetails userDetails = User.builder()
-                .username("user")
-                .password("user")
-                .passwordEncoder(passwordEncoder()::encode)
-                .roles("USER")
-                .build();
-        UserDetails adminDetails = User.builder()
-                .username("admin")
-                .password("admin")
-                .passwordEncoder(passwordEncoder()::encode)
-                .roles("ADMIN", "USER")
-                .build();
-        JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
-        if (manager.userExists(userDetails.getUsername())) {
-            manager.deleteUser(userDetails.getUsername());
-        }
-        if (manager.userExists(adminDetails.getUsername())) {
-            manager.deleteUser(adminDetails.getUsername());
-        }
-        manager.createUser(userDetails);
-        manager.createUser(adminDetails);
-        return manager;
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    @Bean
+    protected AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder(ENCRYPTION_STRENGTH);
     }
 }

@@ -2,9 +2,7 @@ package com.epam.esm.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -18,7 +16,7 @@ public class User extends Entity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", unique = true)
     private String userName;
 
     @Column(name = "password")
@@ -44,6 +42,30 @@ public class User extends Entity {
         this.name = name;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -55,16 +77,20 @@ public class User extends Entity {
 
         User user = (User) o;
 
-        if (!Objects.equals(id, user.id)) {
+        if (!Objects.equals(name, user.name)) {
             return false;
         }
-        return Objects.equals(name, user.name);
+        if (!Objects.equals(userName, user.userName)) {
+            return false;
+        }
+        return Objects.equals(role, user.role);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (userName != null ? userName.hashCode() : 0);
+        result = 31 * result + (role != null ? role.hashCode() : 0);
         return result;
     }
 }

@@ -17,25 +17,6 @@ DROP DATABASE IF EXISTS `gift`;
 CREATE DATABASE IF NOT EXISTS `gift` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `gift`;
 
--- Дамп структуры для таблица gift.authorities
-DROP TABLE IF EXISTS `authorities`;
-CREATE TABLE IF NOT EXISTS `authorities` (
-  `username` varchar(255) NOT NULL,
-  `authority` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  KEY `FK_authorities_users` (`username`),
-  CONSTRAINT `FK_authorities_users` FOREIGN KEY (`username`) REFERENCES `users` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Дамп данных таблицы gift.authorities: ~0 rows (приблизительно)
-/*!40000 ALTER TABLE `authorities` DISABLE KEYS */;
-REPLACE INTO `authorities` (`username`, `authority`) VALUES
-	('akuna', 'ROLE_USER'),
-	('zanoza', 'ROLE_USER'),
-	('user', 'ROLE_USER'),
-	('admin', 'ROLE_ADMIN'),
-	('admin', 'ROLE_USER');
-/*!40000 ALTER TABLE `authorities` ENABLE KEYS */;
-
 -- Дамп структуры для таблица gift.authority
 DROP TABLE IF EXISTS `authority`;
 CREATE TABLE IF NOT EXISTS `authority` (
@@ -43,19 +24,23 @@ CREATE TABLE IF NOT EXISTS `authority` (
   `name` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.authority: ~0 rows (приблизительно)
+-- Дамп данных таблицы gift.authority: ~12 rows (приблизительно)
 /*!40000 ALTER TABLE `authority` DISABLE KEYS */;
 REPLACE INTO `authority` (`id`, `name`) VALUES
+	(2, 'ADD_CERTIFICATES'),
 	(7, 'ADD_ORDER'),
+	(4, 'ADD_TAGS'),
+	(10, 'DELETE_CERTIFICATES'),
+	(12, 'DELETE_TAGS'),
 	(1, 'READ_CERTIFICATES'),
 	(3, 'READ_TAGS'),
 	(6, 'READ_USER_ORDERS'),
 	(5, 'READ_USERS'),
 	(8, 'READ_WIDELY_USED_TAG'),
-	(2, 'WRITE_CERTIFICATES'),
-	(4, 'WRITE_TAGS');
+	(9, 'UPDATE_CERTIFICATES'),
+	(11, 'UPDATE_TAGS');
 /*!40000 ALTER TABLE `authority` ENABLE KEYS */;
 
 -- Дамп структуры для таблица gift.certificate_tag
@@ -69,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `certificate_tag` (
   CONSTRAINT `FK_certificates_tags_tag` FOREIGN KEY (`tag_id`) REFERENCES `tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.certificate_tag: ~4 rows (приблизительно)
+-- Дамп данных таблицы gift.certificate_tag: ~22 rows (приблизительно)
 /*!40000 ALTER TABLE `certificate_tag` DISABLE KEYS */;
 REPLACE INTO `certificate_tag` (`gift_certificate_id`, `tag_id`) VALUES
 	(1, 8),
@@ -172,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `role` (
   UNIQUE KEY `name_UNIQUE` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.role: ~0 rows (приблизительно)
+-- Дамп данных таблицы gift.role: ~2 rows (приблизительно)
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 REPLACE INTO `role` (`id`, `name`) VALUES
 	(1, 'ADMIN'),
@@ -190,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `role_authority` (
   CONSTRAINT `FK_roles_authorities_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.role_authority: ~0 rows (приблизительно)
+-- Дамп данных таблицы gift.role_authority: ~15 rows (приблизительно)
 /*!40000 ALTER TABLE `role_authority` DISABLE KEYS */;
 REPLACE INTO `role_authority` (`role_id`, `authority_id`) VALUES
 	(1, 1),
@@ -203,7 +188,11 @@ REPLACE INTO `role_authority` (`role_id`, `authority_id`) VALUES
 	(2, 3),
 	(2, 5),
 	(2, 6),
-	(2, 7);
+	(2, 7),
+	(1, 10),
+	(1, 12),
+	(1, 9),
+	(1, 11);
 /*!40000 ALTER TABLE `role_authority` ENABLE KEYS */;
 
 -- Дамп структуры для таблица gift.tag
@@ -262,24 +251,6 @@ REPLACE INTO `user` (`id`, `name`, `user_name`, `password`, `role_id`) VALUES
 	(5, 'Artem Artemov', 'artem', '$2a$12$uH/ANs2pIXwT2z9mkiDQBe3pPnMFxLkzIKj/HJ/EKZdnfNthaW/UC', 2),
 	(6, 'Dukalis Muhomorov', 'dukalis', '$2a$12$wz5hDd8JgEz.3WKdyvD7EeiSUZWozmnC/YU00HFY6X5HmhL7nU0Km', 2);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
-
--- Дамп структуры для таблица gift.users
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `enabled` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Дамп данных таблицы gift.users: ~0 rows (приблизительно)
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-REPLACE INTO `users` (`username`, `password`, `enabled`) VALUES
-	('admin', '$2a$12$iqWkJSp0NXESn1hJCgB/ae3JssXdjT6Y.PWtWWNi6qpJaEGYMbzWS', 1),
-	('akuna', '$2a$12$tTOgXKTsxeL8vhGXilP7P.xI315zo.N/7AAS2.wQJmRP6pFnLst/i', 1),
-	('user', '$2a$12$4iKBvWNr3q/TEnVGgJYjye4FVaqjt7Gg5sffjNjpHZaa9RQVdlCCy', 1),
-	('zanoza', '$2a$12$kxNLedgZ6NyOzM/XecCD3.vJPQ4TtFCMXuHbER.MkDawPpEa6Uc6K', 1);
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

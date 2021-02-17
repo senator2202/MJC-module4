@@ -1,6 +1,9 @@
-package com.epam.esm.controller;
+package com.epam.esm.model.dto;
 
-public class UserRegistrationData {
+/**
+ * The DTO object for authentication request
+ */
+public class AuthenticationRequestDTO {
 
     private String userName;
     private String password;

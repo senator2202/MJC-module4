@@ -4,6 +4,9 @@ import com.epam.esm.model.entity.QGiftCertificate;
 import com.epam.esm.validator.GiftEntityValidator;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
+/**
+ * Class provides static methods that return BooleanExpression objects for GiftCertificate Entities
+ */
 public class GiftCertificateExpressionProvider {
 
     private GiftCertificateExpressionProvider() {

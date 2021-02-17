@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.model.dto.UserDTO;
 
 import java.util.List;
@@ -27,5 +28,5 @@ public interface UserService {
      */
     List<UserDTO> findAll(Integer page, Integer size);
 
-
+    UserDTO add(UserRegistrationDTO data);
 }

@@ -1,18 +1,16 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.controller.error_handler.ProjectError;
-import com.epam.esm.controller.exception.ExceptionProvider;
+import com.epam.esm.exception.ExceptionProvider;
 import com.epam.esm.model.dto.OrderDTO;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.dto.UserDTO;
+import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,6 +76,7 @@ public class UserApiController {
      * @return the list of user dto
      */
     @GetMapping
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USERS)")
     public List<UserDTO> findAll(@RequestParam(required = false) Integer page,
                                  @RequestParam(required = false) Integer size) {
         List<UserDTO> users = userService.findAll(page, size);
@@ -93,6 +92,7 @@ public class UserApiController {
      * @return the user dto
      */
     @GetMapping("/{id:^[1-9]\\d{0,18}$}")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USERS)")
     public UserDTO findById(@PathVariable long id) {
         UserDTO user = userService.findById(id).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.USER_NOT_FOUND)
@@ -108,6 +108,7 @@ public class UserApiController {
      * @return the order dto
      */
     @PostMapping("/{userId:^[1-9]\\d{0,18}$}/orders")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).ADD_ORDERS)")
     public OrderDTO buyCertificate(@PathVariable long userId, @RequestBody long certificateId) {
         if (!GiftEntityValidator.correctId(certificateId)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.BUY_PARAMETERS_WRONG_FORMAT);
@@ -125,6 +126,7 @@ public class UserApiController {
      * @return the list
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USER_ORDERS)")
     public List<OrderDTO> findUserOrders(@PathVariable long userId,
                                          @RequestParam(required = false) Integer page,
                                          @RequestParam(required = false) Integer size) {
@@ -140,7 +142,8 @@ public class UserApiController {
      * @return the order dto
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders/{orderId:^[1-9]\\d{0,18}$}")
-    public OrderDTO findUserOrder(@PathVariable long userId,
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USER_ORDERS)")
+    public OrderDTO findUserOrderById(@PathVariable long userId,
                                   @PathVariable long orderId) {
         Optional<OrderDTO> optional = orderService.findUserOrderById(userId, orderId);
         return optional.map(this::addOrderLinks).orElseThrow(
@@ -154,6 +157,7 @@ public class UserApiController {
      * @return the tag dto
      */
     @GetMapping("/widely-used-tag")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_WIDELY_USED_TAG)")
     public TagDTO widelyUsedTag() {
         TagDTO tag = orderService.mostWidelyUsedTagOfUserWithHighestOrdersSum().orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)
@@ -161,18 +165,19 @@ public class UserApiController {
         return TagApiController.addLinks(tag);
     }
 
-    @Autowired
-    private JdbcUserDetailsManager jdbcUserDetailsManager;
-
+    /**
+     * Register new user, return his dto.
+     * @param data the user registration data
+     * @return the user dto
+     */
     @PostMapping
-    public boolean registerUser(@RequestBody UserRegistrationData data) {
-        UserDetails user = User.builder()
-                .username(data.getUserName())
-                .password(new BCryptPasswordEncoder(12).encode(data.getPassword()))
-                .roles("USER")
-                .build();
-        jdbcUserDetailsManager.createUser(user);
-        return true;
+    @PreAuthorize("isAnonymous()")
+    public UserDTO registerUser(@RequestBody UserRegistrationDTO data) {
+        if (!GiftEntityValidator.correctUserRegistrationData(data)) {
+            throw exceptionProvider.wrongParameterFormatException(ProjectError.WRONG_USER_REGISTRATION_DATA);
+        }
+        UserDTO user =  userService.add(data);
+        return addUserLinks(user);
     }
 
     /**
@@ -198,6 +203,6 @@ public class UserApiController {
         GiftCertificateApiController.addSelfLink(order.getGiftCertificate());
         addUserLinks(order.getUser());
         return order
-                .add(linkTo(methodOn(UserApiController.class).findUserOrder(userId, orderId)).withSelfRel());
+                .add(linkTo(methodOn(UserApiController.class).findUserOrderById(userId, orderId)).withSelfRel());
     }
 }

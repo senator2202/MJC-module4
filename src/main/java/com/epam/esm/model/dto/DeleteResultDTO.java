@@ -1,16 +1,16 @@
-package com.epam.esm.controller;
+package com.epam.esm.model.dto;
 
 /**
  * Class represents the result of deleting project entity from DB
  */
-class DeleteResult {
+public class DeleteResultDTO {
 
     /**
      * Result of Entity deleting
      */
     private boolean result;
 
-    public DeleteResult(boolean result) {
+    public DeleteResultDTO(boolean result) {
         this.result = result;
     }
 

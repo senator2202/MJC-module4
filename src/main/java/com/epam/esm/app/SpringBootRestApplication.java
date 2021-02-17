@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @ComponentScan(basePackages = {
         "com.epam.esm.controller",
-        "com.epam.esm.model.dao.impl",
         "com.epam.esm.service.impl",
-        "com.epam.esm.config"
+        "com.epam.esm.config",
+        "com.epam.esm.exception"
 })
 @EntityScan(basePackages = {"com.epam.esm.model.entity"})
 @EnableJpaRepositories(basePackages = "com.epam.esm.model.repository")
