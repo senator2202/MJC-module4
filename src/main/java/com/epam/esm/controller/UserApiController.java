@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static com.epam.esm.controller.HateoasData.ORDERS;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Rest Controller for User entities and their orders.
@@ -119,9 +118,9 @@ public class UserApiController {
     /**
      * Find user orders, optionally with page number and page size.
      *
-     * @param userId the user id
-     * @param page   the page number
-     * @param size   the page size
+     * @param userId    the user id
+     * @param page      the page number
+     * @param size      the page size
      * @return the list
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders")
@@ -136,8 +135,8 @@ public class UserApiController {
     /**
      * Find user order, return its dto.
      *
-     * @param userId  the user id
-     * @param orderId the order id
+     * @param userId    the user id
+     * @param orderId   the order id
      * @return the order dto
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders/{orderId:^[1-9]\\d{0,18}$}")
@@ -187,6 +186,6 @@ public class UserApiController {
         GiftCertificateApiController.addSelfLink(order.getGiftCertificate());
         addUserLinks(order.getUser());
         return order
-                .add(linkTo(methodOn(UserApiController.class).findUserOrderById(userId, orderId)).withSelfRel());
+                .add(linkTo(UserApiController.class).slash(userId).slash(ORDERS).slash(orderId).withSelfRel());
     }
 }
