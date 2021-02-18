@@ -16,11 +16,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * The type Jwt token filter. Filter extracts token from request header, validates it
+ * and sets the Authentication object of security context
+ */
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
 
     private JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * Sets jwt token provider.
+     *
+     * @param jwtTokenProvider the jwt token provider
+     */
     @Autowired
     public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;

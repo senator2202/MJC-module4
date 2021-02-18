@@ -1,12 +1,12 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.controller.security.SecurityUser;
 import com.epam.esm.model.entity.Role;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,11 +28,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String userName) {
+    public SecurityUser loadUserByUsername(String userName) {
         Optional<User> optionalUser = userRepository.findByUserName(userName);
         return optionalUser
-                .map(u -> new org.springframework.security.core.userdetails.User(
-                        u.getUserName(), u.getPassword(), roleToGrantedAuthorities(u.getRole())))
+                .map(u -> new SecurityUser(
+                        u.getUserName(),
+                        u.getPassword(),
+                        roleToGrantedAuthorities(u.getRole()),
+                        u.getId(), u.getRole().getName().equals("ADMIN")))
                 .orElseThrow(
                         () -> new UsernameNotFoundException(String.format("User '%s' not found", userName)));
     }

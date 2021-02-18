@@ -77,4 +77,10 @@ public class UserServiceImpl implements UserService {
         user.setRole(roleRepository.findUserRole());
         return ObjectConverter.toUserDTO(userRepository.save(user));
     }
+
+    @Override
+    public String findUserNameById(long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser.map(User::getName).orElse(null);
+    }
 }

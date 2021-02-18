@@ -29,4 +29,6 @@ public interface UserService {
     List<UserDTO> findAll(Integer page, Integer size);
 
     UserDTO add(UserRegistrationDTO data);
+
+    String findUserNameById(long id);
 }
