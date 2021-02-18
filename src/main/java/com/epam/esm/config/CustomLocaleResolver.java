@@ -13,10 +13,7 @@ import java.util.Locale;
 @Configuration
 public class CustomLocaleResolver extends AcceptHeaderLocaleResolver implements WebMvcConfigurer {
 
-    private static final Locale EN_LOCALE = new Locale("en");
-    private static final Locale RU_LOCALE = new Locale("ru");
-
-    private static final List<Locale> LOCALES = List.of(RU_LOCALE, EN_LOCALE);
+    private static final List<Locale> LOCALES = List.of(new Locale("en"), new Locale("ru"));
 
     @Override
     public Locale resolveLocale(HttpServletRequest request) {

@@ -1,9 +1,9 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.controller.error_handler.ProjectError;
+import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.exception.ExceptionProvider;
 import com.epam.esm.exception.GiftEntityNotFoundException;
-import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.model.dto.OrderDTO;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Order;

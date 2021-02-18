@@ -10,7 +10,8 @@ public enum ProjectError {
     TAG_WRONG_PARAMETERS(40002, "wrongTag"),
     CERTIFICATE_WRONG_PARAMETERS(40003, "wrongCertificate"),
     WRONG_USER_REGISTRATION_DATA(40004, "wrongUserRegistrationData"),
-    USER_NAME_ALREADY_EXISTS(40901, "userNameAlreadyExists");
+    USER_NAME_ALREADY_EXISTS(40901, "userNameAlreadyExists"),
+    INVALID_USERNAME_PASSWORD(40101, "invalidUsernamePassword");
 
     private final int errorCode;
     private final String messageKey;

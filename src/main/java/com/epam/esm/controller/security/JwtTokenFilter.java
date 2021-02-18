@@ -1,7 +1,8 @@
 package com.epam.esm.controller.security;
 
-import com.epam.esm.exception.JwtAuthenticationException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -38,10 +39,9 @@ public class JwtTokenFilter extends GenericFilterBean {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (JwtAuthenticationException e) {
-            SecurityContextHolder.clearContext();
-            ((HttpServletResponse) servletResponse).sendError(e.getHttpStatus().value());
-            throw new JwtAuthenticationException("JWT token expired or invalid");
+        } catch (JwtException | IllegalArgumentException e) {
+            ((HttpServletResponse) servletResponse).sendError(HttpStatus.UNAUTHORIZED.value());
+            return;
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `authority` (
 /*!40000 ALTER TABLE `authority` DISABLE KEYS */;
 REPLACE INTO `authority` (`id`, `name`) VALUES
 	(2, 'ADD_CERTIFICATES'),
-	(7, 'ADD_ORDER'),
+	(7, 'ADD_ORDERS'),
 	(4, 'ADD_TAGS'),
 	(10, 'DELETE_CERTIFICATES'),
 	(12, 'DELETE_TAGS'),
@@ -145,7 +145,8 @@ REPLACE INTO `order` (`id`, `user_id`, `certificate_id`, `order_date`, `cost`) V
 	(16, 1, 30, '2021-01-13T08:58Z', 55.00),
 	(17, 1, 1, '2021-01-21T14:08:14.9825138', 100.00),
 	(18, 1, 3, '2021-01-21T14:08:36.2681671', 125.00),
-	(19, 1, 12, '2021-01-21T14:08:43.5779579', 15.00);
+	(19, 1, 12, '2021-01-21T14:08:43.5779579', 15.00),
+	(20, 1, 12, '2021-02-18T15:46:10.8327844', 15.00);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 
 -- Дамп структуры для таблица gift.role
@@ -206,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `tag` (
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.tag: ~0 rows (приблизительно)
+-- Дамп данных таблицы gift.tag: ~16 rows (приблизительно)
 /*!40000 ALTER TABLE `tag` DISABLE KEYS */;
 REPLACE INTO `tag` (`id`, `name`, `operation`, `operation_date`) VALUES
 	(1, 'Активность', 'INSERT', '2021-02-04T11:47:51.8445638'),
@@ -241,7 +242,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   CONSTRAINT `FK_user_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.user: ~0 rows (приблизительно)
+-- Дамп данных таблицы gift.user: ~6 rows (приблизительно)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 REPLACE INTO `user` (`id`, `name`, `user_name`, `password`, `role_id`) VALUES
 	(1, 'Admin Adminov', 'admin', '$2a$12$Bgki.asLivdQuEaY3wGbnuwu8PdyOm1GVdTihnS5oXB1TQsTtpCqa', 1),

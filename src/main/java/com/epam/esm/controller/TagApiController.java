@@ -81,7 +81,7 @@ public class TagApiController {
      * @return the list
      */
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
+    //@PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
     public List<TagDTO> findAll(@RequestParam(required = false) Integer page,
                                 @RequestParam(required = false) Integer size) {
         List<TagDTO> tags = service.findAll(page, size);
@@ -98,6 +98,7 @@ public class TagApiController {
      */
     @GetMapping("/{id:^[1-9]\\d{0,18}$}")
     @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
+    //@PreAuthorize("isAuthenticated()")
     public TagDTO findById(@PathVariable long id) {
         TagDTO tag = service.findById(id).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)

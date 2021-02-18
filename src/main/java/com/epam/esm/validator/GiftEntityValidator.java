@@ -1,8 +1,8 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.dto.TagDTO;
+import com.epam.esm.model.dto.UserRegistrationDTO;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class GiftEntityValidator {
 
     public static final String TAG_SPLITERATOR = ",";
     private static final String ID_REGEX = "^[1-9]\\d{0,18}$";
-    private static final String NAME_REGEX = "^.{3,50}$";
+    private static final String NAME_REGEX = "^.{2,50}$";
     private static final String PASSWORD_REGEX = NAME_REGEX;
     private static final String CERTIFICATE_DESCRIPTION_REGEX = "^.{1,250}$";
     private static final String POSITIVE_INT_REGEX = "^[1-9]\\d{0,9}$";

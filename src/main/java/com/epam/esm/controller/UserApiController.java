@@ -5,7 +5,6 @@ import com.epam.esm.exception.ExceptionProvider;
 import com.epam.esm.model.dto.OrderDTO;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.dto.UserDTO;
-import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.GiftEntityValidator;
@@ -144,7 +143,7 @@ public class UserApiController {
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders/{orderId:^[1-9]\\d{0,18}$}")
     @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USER_ORDERS)")
     public OrderDTO findUserOrderById(@PathVariable long userId,
-                                  @PathVariable long orderId) {
+                                      @PathVariable long orderId) {
         Optional<OrderDTO> optional = orderService.findUserOrderById(userId, orderId);
         return optional.map(this::addOrderLinks).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.ORDER_NOT_FOUND)
@@ -163,21 +162,6 @@ public class UserApiController {
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)
         );
         return TagApiController.addLinks(tag);
-    }
-
-    /**
-     * Register new user, return his dto.
-     * @param data the user registration data
-     * @return the user dto
-     */
-    @PostMapping
-    @PreAuthorize("isAnonymous()")
-    public UserDTO registerUser(@RequestBody UserRegistrationDTO data) {
-        if (!GiftEntityValidator.correctUserRegistrationData(data)) {
-            throw exceptionProvider.wrongParameterFormatException(ProjectError.WRONG_USER_REGISTRATION_DATA);
-        }
-        UserDTO user =  userService.add(data);
-        return addUserLinks(user);
     }
 
     /**

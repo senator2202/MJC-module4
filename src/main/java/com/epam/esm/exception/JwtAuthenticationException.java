@@ -1,22 +1,10 @@
 package com.epam.esm.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.AuthenticationException;
 
-public class JwtAuthenticationException extends AuthenticationException {
+public class JwtAuthenticationException extends AbstractRuntimeException {
 
-    private HttpStatus httpStatus;
-
-    public JwtAuthenticationException(String msg, Throwable cause, HttpStatus httpStatus) {
-        super(msg, cause);
-        this.httpStatus = httpStatus;
-    }
-
-    public JwtAuthenticationException(String msg) {
-        super(msg);
-    }
-
-    public HttpStatus getHttpStatus() {
-        return httpStatus;
+    public JwtAuthenticationException(String message, int errorCode) {
+        super(message, errorCode, HttpStatus.UNAUTHORIZED);
     }
 }

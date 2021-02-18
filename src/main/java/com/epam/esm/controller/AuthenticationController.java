@@ -1,9 +1,12 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.controller.error_handler.ProjectError;
 import com.epam.esm.controller.security.JwtTokenProvider;
+import com.epam.esm.exception.ExceptionProvider;
 import com.epam.esm.model.dto.AuthenticationRequestDTO;
-import com.epam.esm.model.entity.User;
-import com.epam.esm.model.repository.UserRepository;
+import com.epam.esm.model.dto.UserRegistrationDTO;
+import com.epam.esm.service.UserService;
+import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,19 +26,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Authentication controller.
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
 
-    private UserRepository userRepository;
+    private static final String USER_NAME_MAP_KEY = "userName";
+    private static final String TOKEN_MAP_KEY = "token";
     private JwtTokenProvider jwtTokenProvider;
     private AuthenticationManager authenticationManager;
-
-
-    @Autowired
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private ExceptionProvider exceptionProvider;
+    private UserService userService;
 
     @Autowired
     public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
@@ -47,26 +50,75 @@ public class AuthenticationController {
         this.authenticationManager = authenticationManager;
     }
 
+    @Autowired
+    public void setExceptionProvider(ExceptionProvider exceptionProvider) {
+        this.exceptionProvider = exceptionProvider;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    /**
+     * Authentication endpoint.
+     *
+     * @param request the request object, containing auth data
+     * @return the response entity
+     */
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequestDTO request) {
+    @PreAuthorize("isAnonymous()")
+    public ResponseEntity<Map<String, String>> authenticate(@RequestBody AuthenticationRequestDTO request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(),
                     request.getPassword()));
-            User user = userRepository.findByUserName(request.getUserName()).orElseThrow(
-                    () -> new UsernameNotFoundException("User doesn't exist")
-            );
-            String token = jwtTokenProvider.createToken(request.getUserName(), user.getRole().getName());
-            Map<Object, Object> responce = new HashMap<>();
-            responce.put("userName", request.getUserName());
-            responce.put("token", token);
-            return ResponseEntity.ok(responce);
+            return getTokenResponseEntity(request.getUserName());
         } catch (AuthenticationException e) {
-            return new ResponseEntity<>("Invalid username/password combination", HttpStatus.FORBIDDEN);
+            throw exceptionProvider.jwtAuthenticationException(ProjectError.INVALID_USERNAME_PASSWORD);
         }
     }
 
-    @PostMapping("/logout")
+    /**
+     * Endpoint for registering new users.
+     *
+     * @param data the user registration data
+     * @return the user dto
+     */
+    @PostMapping("/register")
+    @PreAuthorize("isAnonymous()")
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody UserRegistrationDTO data) {
+        if (!GiftEntityValidator.correctUserRegistrationData(data)) {
+            throw exceptionProvider.wrongParameterFormatException(ProjectError.WRONG_USER_REGISTRATION_DATA);
+        }
+        userService.add(data);
+        return getTokenResponseEntity(data.getUserName());
+    }
+
+    /**
+     * Method takes username, converts it to token,
+     * puts username and token into map and returns its response entity
+     *
+     * @param userName the user name
+     * @return the response entity of map
+     */
+    private ResponseEntity<Map<String, String>> getTokenResponseEntity(String userName) {
+        String token = jwtTokenProvider.createToken(userName);
+        Map<String, String> response = new HashMap<>();
+        response.put(USER_NAME_MAP_KEY, userName);
+        response.put(TOKEN_MAP_KEY, token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Logout endpoint.
+     *
+     * @param request  the request
+     * @param response the response
+     */
+    @DeleteMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
+        response.setStatus(HttpStatus.NO_CONTENT.value());
         SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(request, response, null);
     }

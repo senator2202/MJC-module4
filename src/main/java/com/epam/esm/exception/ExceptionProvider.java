@@ -64,4 +64,17 @@ public class ExceptionProvider {
         String message = messageSource.getMessage(error.getMessageKey(), null, locale);
         return new UserNameAlreadyExistsException(message, error.getErrorCode());
     }
+
+
+    /**
+     * Method returns JwtAuthenticationException with localized message
+     *
+     * @param error the error
+     * @return the JwtAuthenticationException
+     */
+    public JwtAuthenticationException jwtAuthenticationException(ProjectError error) {
+        Locale locale = LocaleContextHolder.getLocale();
+        String message = messageSource.getMessage(error.getMessageKey(), null, locale);
+        return new JwtAuthenticationException(message, error.getErrorCode());
+    }
 }

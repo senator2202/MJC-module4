@@ -1,9 +1,9 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.controller.error_handler.ProjectError;
 import com.epam.esm.exception.ExceptionProvider;
 import com.epam.esm.model.dto.UserDTO;
+import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.model.entity.User;
 import com.epam.esm.model.repository.RoleRepository;
 import com.epam.esm.model.repository.UserRepository;

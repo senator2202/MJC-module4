@@ -1,6 +1,6 @@
 package com.epam.esm.config;
 
-import com.epam.esm.controller.security.JwtConfigurer;
+import com.epam.esm.controller.security.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,17 +11,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity(debug = true)
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final int ENCRYPTION_STRENGTH = 12;
-    private JwtConfigurer jwtConfigurer;
+    private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    public void setJwtConfigurer(JwtConfigurer jwtConfigurer) {
-        this.jwtConfigurer = jwtConfigurer;
+    public SpringSecurityConfig(JwtTokenFilter jwtTokenFilter) {
+        this.jwtTokenFilter = jwtTokenFilter;
     }
 
     @Override
@@ -29,25 +30,20 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                /* .and()
+                 .authorizeRequests()
+                 .antMatchers("/api/auth/login").permitAll()
+                 .antMatchers("/api/auth/register").permitAll()*/
+                //.anyRequest()
+                //.authenticated()
                 .and()
-                .authorizeRequests()
-                .antMatchers("/api/auth/login").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .apply(jwtConfigurer);
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    @Override
-    @Bean
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
     }
 
     @Bean

@@ -1,9 +1,7 @@
 package com.epam.esm.model.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -13,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "role")
-public class Role  extends com.epam.esm.model.entity.Entity {
+public class Role extends com.epam.esm.model.entity.Entity {
 
     @Column(name = "name", unique = true)
     private String name;
