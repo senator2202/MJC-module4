@@ -1,6 +1,7 @@
 package com.epam.esm.controller.security;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,24 @@ import java.io.IOException;
 @Component
 public class PersonalDataFilter extends GenericFilter {
 
+    /**
+     * String that separates parts of URI.
+     */
     private static final String URI_SEPARATOR = "/";
-    private static final int USER_ID_INDEX = 3;
+
+    /**
+     * Index of userId part in URI.
+     */
+    private static final int USER_ID_URI_INDEX = 3;
+
+    /**
+     * User orders URI pattern.
+     */
     private static final String USER_ORDERS_URL_PATTERN = "/api/users/[1-9]\\d{0,18}/orders";
+
+    /**
+     * User concrete order URI pattern.
+     */
     private static final String USER_ORDER_RL_PATTERN = USER_ORDERS_URL_PATTERN + "/[1-9]\\d{0,18}";
 
     @Override
@@ -33,12 +49,14 @@ public class PersonalDataFilter extends GenericFilter {
         String uri = ((HttpServletRequest) servletRequest).getRequestURI();
         if (uri.matches(USER_ORDER_RL_PATTERN) || uri.matches(USER_ORDERS_URL_PATTERN)) {
             String[] uriSplit = uri.split(URI_SEPARATOR);
-            Long userId = Long.parseLong(uriSplit[USER_ID_INDEX]);
+            Long userId = Long.parseLong(uriSplit[USER_ID_URI_INDEX]);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            AuthenticationDetails details = (AuthenticationDetails) authentication.getDetails();
-            if (!details.isAdmin() && !userId.equals(details.getUserId())) {
-                ((HttpServletResponse) servletResponse).sendError(HttpStatus.FORBIDDEN.value());
-                return;
+            if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+                AuthenticationDetails details = (AuthenticationDetails) authentication.getDetails();
+                if (!details.isAdmin() && !userId.equals(details.getUserId())) {
+                    ((HttpServletResponse) servletResponse).sendError(HttpStatus.FORBIDDEN.value());
+                    return;
+                }
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

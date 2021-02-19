@@ -10,6 +10,13 @@ public class UserRegistrationDTO {
     private String password;
     private String passwordRepeat;
 
+    public UserRegistrationDTO(String name, String userName, String password, String passwordRepeat) {
+        this.name = name;
+        this.userName = userName;
+        this.password = password;
+        this.passwordRepeat = passwordRepeat;
+    }
+
     public String getName() {
         return name;
     }

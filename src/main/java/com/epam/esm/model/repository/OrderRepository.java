@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>, QuerydslPredicateExecutor<Order> {
 
-    void deleteOrderByGiftCertificateId(long id);
+    void deleteOrdersByGiftCertificateId(long id);
 
     List<Order> findOrdersByUserId(long userId, Pageable pageable);
 

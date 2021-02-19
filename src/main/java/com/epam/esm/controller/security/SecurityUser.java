@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -89,5 +90,41 @@ public class SecurityUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SecurityUser that = (SecurityUser) o;
+
+        if (isAdmin != that.isAdmin) {
+            return false;
+        }
+        if (!Objects.equals(userName, that.userName)) {
+            return false;
+        }
+        if (!Objects.equals(password, that.password)) {
+            return false;
+        }
+        if (!Objects.equals(grantedAuthorities, that.grantedAuthorities)) {
+            return false;
+        }
+        return Objects.equals(userId, that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userName != null ? userName.hashCode() : 0;
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (grantedAuthorities != null ? grantedAuthorities.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (isAdmin ? 1 : 0);
+        return result;
     }
 }

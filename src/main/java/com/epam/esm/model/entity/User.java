@@ -16,8 +16,8 @@ public class User extends Entity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "user_name", unique = true)
-    private String userName;
+    @Column(name = "username", unique = true)
+    private String username;
 
     @Column(name = "password")
     private String password;
@@ -25,14 +25,6 @@ public class User extends Entity {
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-
-    public User() {
-    }
-
-    public User(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     public String getName() {
         return name;
@@ -42,12 +34,12 @@ public class User extends Entity {
         this.name = name;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
 
     public String getPassword() {
@@ -80,7 +72,10 @@ public class User extends Entity {
         if (!Objects.equals(name, user.name)) {
             return false;
         }
-        if (!Objects.equals(userName, user.userName)) {
+        if (!Objects.equals(username, user.username)) {
+            return false;
+        }
+        if (!Objects.equals(password, user.password)) {
             return false;
         }
         return Objects.equals(role, user.role);
@@ -89,7 +84,7 @@ public class User extends Entity {
     @Override
     public int hashCode() {
         int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (userName != null ? userName.hashCode() : 0);
+        result = 31 * result + (username != null ? username.hashCode() : 0);
         result = 31 * result + (role != null ? role.hashCode() : 0);
         return result;
     }

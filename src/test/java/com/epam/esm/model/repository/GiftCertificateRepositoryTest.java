@@ -14,7 +14,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,9 +23,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.epam.esm.util.GiftCertificateExpressionProvider.getBooleanExpression;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = SpringBootRestApplication.class)
+@Transactional
 class GiftCertificateRepositoryTest {
 
     @Autowired
@@ -103,20 +107,17 @@ class GiftCertificateRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     void deleteById() {
         giftCertificateRepository.deleteById(1L);
         assertFalse(giftCertificateRepository.existsById(1L));
     }
 
     @Test
-    @DirtiesContext
     void deleteByIdNotExisting() {
         assertThrows(EmptyResultDataAccessException.class, () -> giftCertificateRepository.deleteById(999L));
     }
 
     @Test
-    @DirtiesContext
     void add() {
         GiftCertificate created = giftCertificateRepository.save(StaticDataProvider.ADDING_GIFT_CERTIFICATE);
         Optional<GiftCertificate> optional = giftCertificateRepository.findById(created.getId());
@@ -124,7 +125,6 @@ class GiftCertificateRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     void update() {
         GiftCertificate updated = giftCertificateRepository.save(StaticDataProvider.UPDATING_GIFT_CERTIFICATE);
         Optional<GiftCertificate> optional = giftCertificateRepository.findById(1L);

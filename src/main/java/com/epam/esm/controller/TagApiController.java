@@ -7,6 +7,9 @@ import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,13 +46,13 @@ public class TagApiController {
         return tag
                 .add(linkTo(TagApiController.class).slash(tag.getId()).withSelfRel())
                 .add(linkTo(TagApiController.class)
-                        .withRel(HateoasData.POST)
+                        .withRel(HttpMethod.POST.name())
                         .withName(HateoasData.ADD_TAG))
                 .add(linkTo(TagApiController.class).slash(tag.getId())
-                        .withRel(HateoasData.PUT)
+                        .withRel(HttpMethod.PUT.name())
                         .withName(HateoasData.UPDATE_TAG))
                 .add(linkTo(TagApiController.class).slash(tag.getId())
-                        .withRel(HateoasData.DELETE)
+                        .withRel(HttpMethod.DELETE.name())
                         .withName(HateoasData.DELETE_TAG));
     }
 
@@ -81,7 +84,7 @@ public class TagApiController {
      * @return the list
      */
     @GetMapping
-    //@PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
     public List<TagDTO> findAll(@RequestParam(required = false) Integer page,
                                 @RequestParam(required = false) Integer size) {
         List<TagDTO> tags = service.findAll(page, size);
@@ -96,9 +99,8 @@ public class TagApiController {
      * @param id the id
      * @return the tag dto
      */
-    @GetMapping("/{id:^[1-9]\\d{0,18}$}")
+    @GetMapping(value = "/{id:^[1-9]\\d{0,18}$}", produces = "application/json;charset=UTF-8")
     @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
-    //@PreAuthorize("isAuthenticated()")
     public TagDTO findById(@PathVariable long id) {
         TagDTO tag = service.findById(id).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)
@@ -149,8 +151,8 @@ public class TagApiController {
      */
     @DeleteMapping("/{id:^[1-9]\\d{0,18}$}")
     @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).DELETE_TAGS)")
-    public DeleteResultDTO delete(@PathVariable int id) {
+    public ResponseEntity<DeleteResultDTO> delete(@PathVariable int id) {
         boolean result = service.delete(id);
-        return new DeleteResultDTO(result);
+        return new ResponseEntity<>(new DeleteResultDTO(result), result ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 }

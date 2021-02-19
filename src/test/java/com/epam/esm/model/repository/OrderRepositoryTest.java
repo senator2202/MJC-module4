@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = SpringBootRestApplication.class)
+@Sql(scripts = {"classpath:controller-script.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Transactional
 class OrderRepositoryTest {
 
     @Autowired
@@ -28,19 +30,18 @@ class OrderRepositoryTest {
 
     static Stream<Arguments> argsFindUserOrders() {
         return Stream.of(
-                Arguments.of(Pageable.unpaged(), 7),
+                Arguments.of(Pageable.unpaged(), 8),
                 Arguments.of(PageRequest.of(0, 5), 5),
-                Arguments.of(PageRequest.of(1, 4), 3),
+                Arguments.of(PageRequest.of(1, 5), 3),
                 Arguments.of(PageRequest.of(10, 20), 0)
         );
     }
 
     @Test
-    @DirtiesContext
     void add() {
         Order created = orderRepository.save(StaticDataProvider.ADDING_ORDER);
         List<Order> orders = orderRepository.findOrdersByUserId(1L, Pageable.unpaged());
-        assertTrue(created.getId() != null && orders.size() == 8);
+        assertTrue(created.getId() != null && orders.size() == 9);
     }
 
     @Test
@@ -65,10 +66,8 @@ class OrderRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
-    @Transactional
-    void deleteOrderByGiftCertificateId() {
-        orderRepository.deleteOrderByGiftCertificateId(1L);
-        assertEquals(14, orderRepository.findAll().size());
+    void deleteOrdersByGiftCertificateId() {
+        orderRepository.deleteOrdersByGiftCertificateId(1L);
+        assertEquals(15, orderRepository.findAll().size());
     }
 }

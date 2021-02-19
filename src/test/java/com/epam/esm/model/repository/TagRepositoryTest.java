@@ -12,14 +12,18 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = SpringBootRestApplication.class)
+@Transactional
 class TagRepositoryTest {
 
     @Autowired
@@ -62,7 +66,6 @@ class TagRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     void add() {
         tagRepository.save(new Tag("NewTag"));
         Page<Tag> allTags = tagRepository.findAll(Pageable.unpaged());
@@ -70,7 +73,6 @@ class TagRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     void update() {
         Tag updated = tagRepository.save(new Tag(1L, "Пассивность"));
         Optional<Tag> optional = tagRepository.findById(1L);
@@ -78,14 +80,12 @@ class TagRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     void deleteByIdExisting() {
         tagRepository.deleteById(1L);
         assertFalse(tagRepository.existsById(1L));
     }
 
     @Test
-    @DirtiesContext
     void deleteByIdNotExisting() {
         assertThrows(EmptyResultDataAccessException.class, () -> tagRepository.deleteById(999L));
     }

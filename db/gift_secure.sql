@@ -125,9 +125,9 @@ CREATE TABLE IF NOT EXISTS `order` (
   KEY `FK_order_user` (`user_id`),
   CONSTRAINT `FK_order_gift_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `gift_certificate` (`id`),
   CONSTRAINT `FK_order_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.order: ~16 rows (приблизительно)
+-- Дамп данных таблицы gift.order: ~17 rows (приблизительно)
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
 REPLACE INTO `order` (`id`, `user_id`, `certificate_id`, `order_date`, `cost`) VALUES
 	(1, 1, 6, '2020-12-24T12:21Z', 250.00),
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `role_authority` (
   CONSTRAINT `FK_roles_authorities_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.role_authority: ~15 rows (приблизительно)
+-- Дамп данных таблицы gift.role_authority: ~16 rows (приблизительно)
 /*!40000 ALTER TABLE `role_authority` DISABLE KEYS */;
 REPLACE INTO `role_authority` (`role_id`, `authority_id`) VALUES
 	(1, 1),
@@ -193,7 +193,9 @@ REPLACE INTO `role_authority` (`role_id`, `authority_id`) VALUES
 	(1, 10),
 	(1, 12),
 	(1, 9),
-	(1, 11);
+	(1, 11),
+	(1, 8),
+	(1, 7);
 /*!40000 ALTER TABLE `role_authority` ENABLE KEYS */;
 
 -- Дамп структуры для таблица gift.tag
@@ -233,18 +235,18 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `user_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `password` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `role_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_name` (`user_name`),
+  UNIQUE KEY `user_name` (`username`) USING BTREE,
   KEY `FK_user_role` (`role_id`),
   CONSTRAINT `FK_user_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Дамп данных таблицы gift.user: ~6 rows (приблизительно)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-REPLACE INTO `user` (`id`, `name`, `user_name`, `password`, `role_id`) VALUES
+REPLACE INTO `user` (`id`, `name`, `username`, `password`, `role_id`) VALUES
 	(1, 'Admin Adminov', 'admin', '$2a$12$Bgki.asLivdQuEaY3wGbnuwu8PdyOm1GVdTihnS5oXB1TQsTtpCqa', 1),
 	(2, 'Petr Petrov', 'petr', '$2a$12$/5rcwYbuAq7Ot.NSfFNrnOEb8t5KVJXCgwW7TCDtLgDvKPd5PmezO', 2),
 	(3, 'Alexey Alexeev', 'valerii', '$2a$12$h7nU6.6Oe8F5yXryEBtoeeWOKhyJJEG4dm.rYdHA0VOc023z79OVO', 2),

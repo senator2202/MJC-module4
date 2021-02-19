@@ -24,13 +24,8 @@ public class TagServiceImpl implements TagService {
 
     private TagRepository tagRepository;
 
-    /**
-     * Sets tag repository.
-     *
-     * @param tagRepository the tag repository
-     */
     @Autowired
-    public TagServiceImpl(TagRepository tagRepository) {
+    public void setTagRepository(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
 

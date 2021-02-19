@@ -3,6 +3,7 @@ package com.epam.esm.validator;
 import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.dto.TagDTO;
+import com.epam.esm.model.dto.UserRegistrationDTO;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -107,6 +108,61 @@ class GiftEntityValidatorTest {
         );
     }
 
+    static Stream<Arguments> correctGiftCertificateOptionalArgs() {
+        return Stream.of(
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, null, null, null, null), true),
+                Arguments.of(new GiftCertificateDTO(1L, null, null, null, null, null, null, null), true),
+                Arguments.of(new GiftCertificateDTO(-1L, null, null, null, null, null, null, null), true),
+                Arguments.of(new GiftCertificateDTO(null, "name", null, null, null, null, null, null), true),
+                Arguments.of(new GiftCertificateDTO(null, "1111111111111111111111111111111111111111" +
+                        "11111111111111111111111111111111", null, null, null, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, "", null, null, null, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, null, "description", null, null, null, null, null), true),
+                Arguments.of(new GiftCertificateDTO(null, null, "", null, null, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, null, "11111111111111111111111111111111111111111111111111" +
+                        "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" +
+                        "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" +
+                        "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111" +
+                        "11111111111111111111111111", null, null, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, BigDecimal.valueOf(1.25),
+                        null, null, null, null), true),
+                Arguments.of(new GiftCertificateDTO(null, null, null, BigDecimal.valueOf(0),
+                        null, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, BigDecimal.valueOf(-25.25),
+                        null, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, 25, null, null, null), true),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, -25, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, 0, null, null, null), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, null, null, null,
+                        List.of(new TagDTO(null, "NewTag"))), true),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, null, null, null,
+                        List.of(new TagDTO(null, null))), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, null, null, null,
+                        List.of(new TagDTO(null, ""))), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, null, null, null,
+                        List.of(new TagDTO(null, "NewTag"), new TagDTO(null, null))), false),
+                Arguments.of(new GiftCertificateDTO(null, null, null, null, null, null, null,
+                        List.of(new TagDTO(null, "111111111111111111111111111111111111111111111111111111111" +
+                                "111111111111111111111111111111111111111111111111111111"))), false)
+        );
+    }
+
+    static Stream<Arguments> correctUserRegistrationDataArgs() {
+        return Stream.of(
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", "alex", "password", "password"), true),
+                Arguments.of(new UserRegistrationDTO(null, null, null, null), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov1111111111111111111111111111111111111111" +
+                        "11111111111111111111111111111111111111111", null, null, null), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", null, null, null), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", "alex", null, null), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", "alex,", null, null), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", "alex 22", null, null), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", "alex", "password", null), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", "alex", "password", ""), false),
+                Arguments.of(new UserRegistrationDTO("Alexey Kharitonov", "alex", "password", "not match"), false)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("correctIdArgs")
     void correctId(boolean result, long... ids) {
@@ -161,5 +217,17 @@ class GiftEntityValidatorTest {
     @MethodSource("correctOptionalCertificateNameArgs")
     void correctOptionalCertificateName(String name, boolean result) {
         assertEquals(GiftEntityValidator.correctOptionalCertificateName(name), result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("correctGiftCertificateOptionalArgs")
+    void correctGiftCertificateOptional(GiftCertificateDTO source, boolean result) {
+        assertEquals(GiftEntityValidator.correctGiftCertificateOptional(source), result);
+    }
+
+    @ParameterizedTest
+    @MethodSource("correctUserRegistrationDataArgs")
+    void correctUserRegistrationData(UserRegistrationDTO source, boolean result) {
+        assertEquals(GiftEntityValidator.correctUserRegistrationData(source), result);
     }
 }

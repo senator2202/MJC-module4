@@ -40,6 +40,13 @@ public class Tag extends Entity {
         this.name = name;
     }
 
+    public Tag(Long id, String name, String operation, String operationDate) {
+        this.id = id;
+        this.name = name;
+        this.operation = operation;
+        this.operationDate = operationDate;
+    }
+
     public String getName() {
         return name;
     }

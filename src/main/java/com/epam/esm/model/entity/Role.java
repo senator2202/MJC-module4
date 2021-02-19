@@ -16,7 +16,7 @@ public class Role extends com.epam.esm.model.entity.Entity {
     @Column(name = "name", unique = true)
     private String name;
 
-    @ManyToMany/*(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)*/
+    @ManyToMany
     @JoinTable(
             name = "role_authority",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),

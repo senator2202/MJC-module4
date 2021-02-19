@@ -25,6 +25,9 @@ public class GiftCertificateDTO extends RepresentationModel<GiftCertificateDTO> 
     private String lastUpdateDate;
     private List<TagDTO> tags;
 
+    public GiftCertificateDTO() {
+    }
+
     public GiftCertificateDTO(Long id,
                               String name,
                               String description,

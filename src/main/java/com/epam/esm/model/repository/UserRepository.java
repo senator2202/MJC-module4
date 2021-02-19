@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, QuerydslPredicateExecutor<User> {
 
-    Optional<User> findByUserName(String userName);
+    Optional<User> findByUsername(String userName);
 
-    boolean existsByUserName(String name);
+    boolean existsByUsername(String name);
 }

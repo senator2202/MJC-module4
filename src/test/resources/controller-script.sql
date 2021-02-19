@@ -1,5 +1,19 @@
-
--- Дамп данных таблицы gift.authority: ~7 rows (приблизительно) /*!40000 ALTER TABLE `authority` DISABLE KEYS */;
+-- --------------------------------------------------------
+-- Хост:                         127.0.0.1
+-- Версия сервера:               8.0.23 - MySQL Community Server - GPL
+-- Операционная система:         Win64
+-- HeidiSQL Версия:              11.0.0.5919
+-- -------------------------------------------------------- /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+DROP TABLE IF EXISTS `authority`;
+CREATE TABLE IF NOT EXISTS `authority` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`name` varchar(100) NOT NULL
+);
+-- Дамп данных таблицы gift.authority: ~12 rows (приблизительно) /*!40000 ALTER TABLE `authority` DISABLE KEYS */;
 INSERT INTO `authority` (`id`, `name`)
 VALUES (2, 'ADD_CERTIFICATES'),
 	(7, 'ADD_ORDERS'),
@@ -14,6 +28,11 @@ VALUES (2, 'ADD_CERTIFICATES'),
 	(9, 'UPDATE_CERTIFICATES'),
 	(11, 'UPDATE_TAGS');
 /*!40000 ALTER TABLE `authority` ENABLE KEYS */;
+DROP TABLE IF EXISTS `certificate_tag`;
+CREATE TABLE IF NOT EXISTS `certificate_tag` (
+	`gift_certificate_id` bigint DEFAULT NULL,
+	`tag_id` bigint DEFAULT NULL
+) ;
 -- Дамп данных таблицы gift.certificate_tag: ~22 rows (приблизительно) /*!40000 ALTER TABLE `certificate_tag` DISABLE KEYS */;
 INSERT INTO `certificate_tag` (`gift_certificate_id`, `tag_id`)
 VALUES (1, 8),
@@ -39,6 +58,16 @@ VALUES (1, 8),
 	(30, 41),
 	(30, 19);
 /*!40000 ALTER TABLE `certificate_tag` ENABLE KEYS */;
+DROP TABLE IF EXISTS `gift_certificate`;
+CREATE TABLE IF NOT EXISTS `gift_certificate` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`name` varchar(50) NOT NULL,
+	`description` varchar(250) DEFAULT NULL,
+	`price` decimal(10, 2) DEFAULT NULL,
+	`duration` int DEFAULT NULL,
+	`create_date` varchar(50) DEFAULT NULL,
+	`last_update_date` varchar(50) DEFAULT NULL
+) ;
 -- Дамп данных таблицы gift.gift_certificate: ~13 rows (приблизительно) /*!40000 ALTER TABLE `gift_certificate` DISABLE KEYS */;
 INSERT INTO `gift_certificate` (`id`, `name`, `description`, `price`, `duration`
 	, `create_date`, `last_update_date`)
@@ -69,6 +98,14 @@ VALUES (1, 'Сауна Тритон', 'Сертификат на бесплат�
 	(30, 'Masterpiece gallery', 'Gallery visit for 2 people', 55.00, 365
 		, '2021-01-12T08:44Z', '2021-01-12T08:44Z');
 /*!40000 ALTER TABLE `gift_certificate` ENABLE KEYS */;
+DROP TABLE IF EXISTS `order`;
+CREATE TABLE IF NOT EXISTS `order` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`user_id` bigint NOT NULL,
+	`certificate_id` bigint NOT NULL,
+	`order_date` varchar(50) DEFAULT NULL,
+	`cost` decimal(10, 2) DEFAULT NULL
+) ;
 -- Дамп данных таблицы gift.order: ~17 rows (приблизительно) /*!40000 ALTER TABLE `order` DISABLE KEYS */;
 INSERT INTO `order` (`id`, `user_id`, `certificate_id`, `order_date`, `cost`)
 VALUES (1, 1, 6, '2020-12-24T12:21Z', 250.00),
@@ -89,12 +126,22 @@ VALUES (1, 1, 6, '2020-12-24T12:21Z', 250.00),
 	(19, 1, 12, '2021-01-21T14:08:43.5779579', 15.00),
 	(20, 1, 12, '2021-02-18T15:46:10.8327844', 15.00);
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE IF NOT EXISTS `role` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`name` varchar(50) NOT NULL
+) ;
 -- Дамп данных таблицы gift.role: ~2 rows (приблизительно) /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 INSERT INTO `role` (`id`, `name`)
 VALUES (1, 'ADMIN'),
 	(2, 'USER');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
--- Дамп данных таблицы gift.role_authority: ~0 rows (приблизительно) /*!40000 ALTER TABLE `role_authority` DISABLE KEYS */;
+DROP TABLE IF EXISTS `role_authority`;
+CREATE TABLE IF NOT EXISTS `role_authority` (
+	`role_id` bigint DEFAULT NULL,
+	`authority_id` bigint DEFAULT NULL
+) ;
+-- Дамп данных таблицы gift.role_authority: ~16 rows (приблизительно) /*!40000 ALTER TABLE `role_authority` DISABLE KEYS */;
 INSERT INTO `role_authority` (`role_id`, `authority_id`)
 VALUES (1, 1),
 	(1, 3),
@@ -114,7 +161,14 @@ VALUES (1, 1),
 	(1, 8),
     (1, 7);
 /*!40000 ALTER TABLE `role_authority` ENABLE KEYS */;
--- Дамп данных таблицы gift.tag: ~0 rows (приблизительно) /*!40000 ALTER TABLE `tag` DISABLE KEYS */;
+DROP TABLE IF EXISTS `tag`;
+CREATE TABLE IF NOT EXISTS `tag` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`name` varchar(50) NOT NULL,
+	`operation` varchar(10) NOT NULL,
+	`operation_date` varchar(50) NOT NULL
+) ;
+-- Дамп данных таблицы gift.tag: ~16 rows (приблизительно) /*!40000 ALTER TABLE `tag` DISABLE KEYS */;
 INSERT INTO `tag` (`id`, `name`, `operation`, `operation_date`)
 VALUES (1, 'Активность', 'INSERT', '2021-02-04T11:47:51.8445638'),
 	(2, 'Красота', 'INSERT', '2021-02-04T11:47:51.8445638'),
@@ -133,7 +187,15 @@ VALUES (1, 'Активность', 'INSERT', '2021-02-04T11:47:51.8445638'),
 	(41, 'trololo', 'INSERT', '2021-02-04T11:47:51.8445638'),
 	(43, 'Drotiki', 'INSERT', '2021-02-04T11:47:51.8445638');
 /*!40000 ALTER TABLE `tag` ENABLE KEYS */;
--- Дамп данных таблицы gift.user: ~0 rows (приблизительно) /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE IF NOT EXISTS `user` (
+	`id` bigint NOT NULL AUTO_INCREMENT,
+	`name` varchar(50) NOT NULL,
+	`username` varchar(50) NOT NULL,
+	`password` varchar(150) NOT NULL,
+	`role_id` bigint NOT NULL
+) ;
+-- Дамп данных таблицы gift.user: ~6 rows (приблизительно) /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` (`id`, `name`, `username`, `password`, `role_id`)
 VALUES (1, 'Admin Adminov', 'admin', '$2a$12$Bgki.asLivdQuEaY3wGbnuwu8PdyOm1GVdTihnS5oXB1TQsTtpCqa', 1),
 	(2, 'Petr Petrov', 'petr', '$2a$12$/5rcwYbuAq7Ot.NSfFNrnOEb8t5KVJXCgwW7TCDtLgDvKPd5PmezO', 2),
@@ -141,3 +203,7 @@ VALUES (1, 'Admin Adminov', 'admin', '$2a$12$Bgki.asLivdQuEaY3wGbnuwu8PdyOm1GVdT
 	(4, 'Mihail Mihailov', 'mihail', '$2a$12$LoWiGszjJjlsv2jPxtsz3e6scAiwmhqhe2dFcRuhre2WM7.QOSo1e', 2),
 	(5, 'Artem Artemov', 'artem', '$2a$12$uH/ANs2pIXwT2z9mkiDQBe3pPnMFxLkzIKj/HJ/EKZdnfNthaW/UC', 2),
 	(6, 'Dukalis Muhomorov', 'dukalis', '$2a$12$wz5hDd8JgEz.3WKdyvD7EeiSUZWozmnC/YU00HFY6X5HmhL7nU0Km', 2);
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

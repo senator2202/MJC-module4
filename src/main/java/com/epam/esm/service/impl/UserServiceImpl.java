@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
     private ExceptionProvider exceptionProvider;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -67,20 +67,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO add(UserRegistrationDTO data) {
-        if (userRepository.existsByUserName(data.getUserName())) {
+        if (userRepository.existsByUsername(data.getUserName())) {
             throw exceptionProvider.userNameAlreadyExistsException(ProjectError.USER_NAME_ALREADY_EXISTS);
         }
         User user = new User();
         user.setName(data.getName());
-        user.setUserName(data.getUserName());
+        user.setUsername(data.getUserName());
         user.setPassword(passwordEncoder.encode(data.getPassword()));
         user.setRole(roleRepository.findUserRole());
         return ObjectConverter.toUserDTO(userRepository.save(user));
-    }
-
-    @Override
-    public String findUserNameById(long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        return optionalUser.map(User::getName).orElse(null);
     }
 }

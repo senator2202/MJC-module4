@@ -28,7 +28,11 @@ public interface UserService {
      */
     List<UserDTO> findAll(Integer page, Integer size);
 
+    /**
+     * Add user method.
+     *
+     * @param data user registration data
+     * @return the user dto
+     */
     UserDTO add(UserRegistrationDTO data);
-
-    String findUserNameById(long id);
 }

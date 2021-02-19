@@ -7,6 +7,9 @@ import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,15 +52,15 @@ public class GiftCertificateApiController {
         return certificate
                 .add(linkTo(methodOn(GiftCertificateApiController.class).findById(certificate.getId())).withSelfRel())
                 .add(linkTo(GiftCertificateApiController.class)
-                        .withRel(HateoasData.POST)
+                        .withRel(HttpMethod.POST.name())
                         .withName(HateoasData.ADD_CERTIFICATE))
                 .add(linkTo(methodOn(GiftCertificateApiController.class)
                         .findById(certificate.getId()))
-                        .withRel(HateoasData.PATCH)
+                        .withRel(HttpMethod.PATCH.name())
                         .withName(HateoasData.UPDATE_CERTIFICATE_FIELDS))
                 .add(linkTo(methodOn(GiftCertificateApiController.class)
                         .findById(certificate.getId()))
-                        .withRel(HateoasData.DELETE)
+                        .withRel(HttpMethod.DELETE.name())
                         .withName(HateoasData.DELETE_CERTIFICATE));
     }
 
@@ -172,8 +175,8 @@ public class GiftCertificateApiController {
      */
     @DeleteMapping("/{id:^[1-9]\\d{0,18}$}")
     @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).DELETE_CERTIFICATES)")
-    public DeleteResultDTO delete(@PathVariable long id) {
+    public ResponseEntity<DeleteResultDTO> delete(@PathVariable long id) {
         boolean result = service.delete(id);
-        return new DeleteResultDTO(result);
+        return new ResponseEntity<>(new DeleteResultDTO(result), result ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 }

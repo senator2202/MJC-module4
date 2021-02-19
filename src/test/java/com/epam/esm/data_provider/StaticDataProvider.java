@@ -1,18 +1,26 @@
 package com.epam.esm.data_provider;
 
+import com.epam.esm.controller.security.SecurityUser;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.dto.OrderDTO;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.dto.UserDTO;
+import com.epam.esm.model.dto.UserRegistrationDTO;
+import com.epam.esm.model.entity.Authority;
 import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Order;
+import com.epam.esm.model.entity.Role;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class StaticDataProvider {
 
@@ -48,6 +56,8 @@ public class StaticDataProvider {
     public static final GiftCertificate ADDING_GIFT_CERTIFICATE;
     public static final GiftCertificate UPDATING_GIFT_CERTIFICATE;
     public static final Order ADDING_ORDER;
+    public static final UserRegistrationDTO USER_REGISTRATION_DTO;
+    public static final SecurityUser SECURITY_USER;
 
     static {
         TAG_DTO = new TagDTO(1L, "Вязание");
@@ -63,7 +73,17 @@ public class StaticDataProvider {
         TAG_LIST = Collections.nCopies(10, TAG);
         TAG_LIST_LIMIT = Collections.nCopies(LIMIT, TAG);
         USER_DTO = new UserDTO(1L, "Alex");
-        USER = new User(1L, "Alex");
+        USER = new User();
+        USER.setId(1L);
+        USER.setName("Alex");
+        USER.setUsername("alex");
+        String password = new BCryptPasswordEncoder(12).encode("password");
+        USER.setPassword(password);
+        Role role = new Role();
+        role.setName("USER");
+        role.setId(1L);
+        role.setAuthorities(Set.of(new Authority(1L, "READ_TAGS"), new Authority(2L, "READ_CERTIFICATES")));
+        USER.setRole(role);
         USER_DTO_LIST = Collections.nCopies(10, USER_DTO);
         USER_DTO_LIST_LIMIT = Collections.nCopies(LIMIT, USER_DTO);
         USER_LIST = Collections.nCopies(10, USER);
@@ -120,11 +140,20 @@ public class StaticDataProvider {
         ORDER_DTO_LIST_LIMIT = Collections.nCopies(LIMIT, ORDER_DTO);
         ADDING_ORDER = new Order(
                 null,
-                new User(1L, "Alex"),
+                USER,
                 new GiftCertificate(12L, "SilverScreen", "Просмотр любого кинофильма", BigDecimal.valueOf(15.00),
                         45, "2020-12-18T09:22Z", "2020-12-18T09:25Z", List.of(new Tag(7L, "Кино"))),
                 "2021-02-05T17:05:55.6995333",
                 BigDecimal.valueOf(15.00)
         );
+        USER_REGISTRATION_DTO = new UserRegistrationDTO("Alex", "alex", "password", "password");
+        SECURITY_USER = new SecurityUser(
+                "alex",
+                password,
+                role.getAuthorities().stream()
+                        .map(au -> new SimpleGrantedAuthority(au.getName()))
+                        .collect(Collectors.toSet()),
+                1L,
+                false);
     }
 }

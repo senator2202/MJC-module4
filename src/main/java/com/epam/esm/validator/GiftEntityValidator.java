@@ -17,6 +17,7 @@ public class GiftEntityValidator {
     public static final String TAG_SPLITERATOR = ",";
     private static final String ID_REGEX = "^[1-9]\\d{0,18}$";
     private static final String NAME_REGEX = "^.{2,50}$";
+    private static final String LOGIN_REGEX = "^[\\p{L},\\d]{2,50}$";
     private static final String PASSWORD_REGEX = NAME_REGEX;
     private static final String CERTIFICATE_DESCRIPTION_REGEX = "^.{1,250}$";
     private static final String POSITIVE_INT_REGEX = "^[1-9]\\d{0,9}$";
@@ -233,7 +234,7 @@ public class GiftEntityValidator {
         if (data.getName() == null || !data.getName().matches(NAME_REGEX)) {
             return false;
         }
-        if (data.getUserName() == null || !data.getUserName().matches(NAME_REGEX)) {
+        if (data.getUserName() == null || !data.getUserName().matches(LOGIN_REGEX)) {
             return false;
         }
         return data.getPassword() != null

@@ -17,11 +17,11 @@ public interface GiftCertificateService extends BaseService<GiftCertificateDTO> 
      * @param tagNames    the tag names
      * @param sortType    the sort type
      * @param direction   the direction
-     * @param limit       the limit
-     * @param offset      the offset
+     * @param page        the page number
+     * @param size        the page size
      * @return the list
      */
     List<GiftCertificateDTO> findAll(String name, String description, String tagNames, String sortType,
-                                     String direction, Integer limit, Integer offset);
+                                     String direction, Integer page, Integer size);
 
 }

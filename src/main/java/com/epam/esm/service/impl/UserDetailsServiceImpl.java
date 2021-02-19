@@ -19,23 +19,24 @@ import java.util.stream.Collectors;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private static final String ADMIN_ROLE_NAME = "ADMIN";
     private UserRepository userRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     @Transactional
     public SecurityUser loadUserByUsername(String userName) {
-        Optional<User> optionalUser = userRepository.findByUserName(userName);
+        Optional<User> optionalUser = userRepository.findByUsername(userName);
         return optionalUser
                 .map(u -> new SecurityUser(
-                        u.getUserName(),
+                        u.getUsername(),
                         u.getPassword(),
                         roleToGrantedAuthorities(u.getRole()),
-                        u.getId(), u.getRole().getName().equals("ADMIN")))
+                        u.getId(), u.getRole().getName().equals(ADMIN_ROLE_NAME)))
                 .orElseThrow(
                         () -> new UsernameNotFoundException(String.format("User '%s' not found", userName)));
     }

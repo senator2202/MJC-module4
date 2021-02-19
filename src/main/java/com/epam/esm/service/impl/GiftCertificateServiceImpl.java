@@ -37,11 +37,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private TagRepository tagRepository;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository,
-                                      OrderRepository orderRepository,
-                                      TagRepository tagRepository) {
+    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
         this.giftCertificateRepository = giftCertificateRepository;
+    }
+
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setTagRepository(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
 
@@ -63,7 +69,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     /**
      * Method returns source string in camel case format
      *
-     * @param source the name
+     * @param source the source String object
      * @return the modified source String
      */
     private String toCamelCase(String source) {
@@ -103,7 +109,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public boolean delete(long id) {
         if (giftCertificateRepository.existsById(id)) {
-            orderRepository.deleteOrderByGiftCertificateId(id);
+            orderRepository.deleteOrdersByGiftCertificateId(id);
             giftCertificateRepository.deleteById(id);
             return true;
         } else {
@@ -113,6 +119,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     /**
      * Method copies non-empty fields from DTO object to entity object, found in DB
+     *
+     * @param source the source dto object
+     * @param found  the found entity object
      */
     private void updateNotEmptyFields(GiftCertificateDTO source, GiftCertificate found) {
         if (source.getName() != null) {
@@ -137,6 +146,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     /**
      * Method updates GiftCertificate tags. It iterates on list of tags, looks for tag with the same name in db.
      * If tag with the same name found, replace tag in list on existing tag from DB.
+     *
+     * @param source the source object, which tags we will look for
      */
     private void findTagsInDB(GiftCertificate source) {
         List<Tag> tags = source.getTags();

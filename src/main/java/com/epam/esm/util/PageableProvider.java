@@ -4,6 +4,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+/**
+ * Class provides static method to create Pageable objects.
+ */
 public class PageableProvider {
 
     private PageableProvider() {

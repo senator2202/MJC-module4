@@ -70,9 +70,9 @@ public class AuthenticationController {
     @PreAuthorize("isAnonymous()")
     public ResponseEntity<Map<String, String>> authenticate(@RequestBody AuthenticationRequestDTO request) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(),
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
                     request.getPassword()));
-            return getTokenResponseEntity(request.getUserName());
+            return getTokenResponseEntity(request.getUsername());
         } catch (AuthenticationException e) {
             throw exceptionProvider.jwtAuthenticationException(ProjectError.INVALID_USERNAME_PASSWORD);
         }

@@ -30,21 +30,16 @@ import static org.mockito.Mockito.when;
 
 class OrderServiceImplTest {
 
+    @InjectMocks
+    private final OrderService service = new OrderServiceImpl();
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private OrderRepository orderRepository;
-
     @Mock
     private GiftCertificateRepository giftCertificateRepository;
-
     @Mock
     private ExceptionProvider exceptionProvider;
-
-    @InjectMocks
-    private final OrderService service = new OrderServiceImpl(orderRepository, userRepository,
-            giftCertificateRepository, exceptionProvider);
 
     @BeforeEach
     void setUp() {

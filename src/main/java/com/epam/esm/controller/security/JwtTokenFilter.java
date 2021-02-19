@@ -17,8 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * The type Jwt token filter. Filter extracts token from request header, validates it
- * and sets the Authentication object of security context
+ * Filter extracts token from request header, validates it and sets the Authentication object of security context
  */
 @Component
 public class JwtTokenFilter extends GenericFilterBean {

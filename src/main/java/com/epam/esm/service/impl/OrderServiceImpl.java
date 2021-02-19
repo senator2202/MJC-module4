@@ -15,6 +15,7 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.util.DateTimeUtility;
 import com.epam.esm.util.ObjectConverter;
 import com.epam.esm.util.PageableProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,13 +39,23 @@ public class OrderServiceImpl implements OrderService {
     private GiftCertificateRepository giftCertificateRepository;
     private ExceptionProvider exceptionProvider;
 
-    public OrderServiceImpl(OrderRepository orderRepository,
-                            UserRepository userRepository,
-                            GiftCertificateRepository giftCertificateRepository,
-                            ExceptionProvider exceptionProvider) {
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
         this.giftCertificateRepository = giftCertificateRepository;
+    }
+
+    @Autowired
+    public void setExceptionProvider(ExceptionProvider exceptionProvider) {
         this.exceptionProvider = exceptionProvider;
     }
 

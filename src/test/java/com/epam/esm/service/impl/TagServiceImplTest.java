@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.app.SpringBootRestApplication;
 import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Tag;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,18 +19,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = SpringBootRestApplication.class)
 class TagServiceImplTest {
 
+    @InjectMocks
+    private final TagService service = new TagServiceImpl();
     @Mock
     private TagRepository tagRepository;
-    @InjectMocks
-    private final TagService service = new TagServiceImpl(tagRepository);
     @Mock
     private Page<Tag> tagPage;
 

@@ -9,6 +9,7 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.GiftEntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -118,9 +119,9 @@ public class UserApiController {
     /**
      * Find user orders, optionally with page number and page size.
      *
-     * @param userId    the user id
-     * @param page      the page number
-     * @param size      the page size
+     * @param userId the user id
+     * @param page   the page number
+     * @param size   the page size
      * @return the list
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders")
@@ -135,8 +136,8 @@ public class UserApiController {
     /**
      * Find user order, return its dto.
      *
-     * @param userId    the user id
-     * @param orderId   the order id
+     * @param userId  the user id
+     * @param orderId the order id
      * @return the order dto
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders/{orderId:^[1-9]\\d{0,18}$}")
@@ -170,10 +171,10 @@ public class UserApiController {
         return user
                 .add(linkTo(UserApiController.class).slash(user.getId()).withSelfRel())
                 .add(linkTo(UserApiController.class).slash(user.getId()).slash(ORDERS)
-                        .withRel(HateoasData.GET)
+                        .withRel(HttpMethod.GET.name())
                         .withName(HateoasData.GET_USER_ORDERS))
                 .add(linkTo(UserApiController.class).slash(user.getId()).slash(ORDERS)
-                        .withRel(HateoasData.POST)
+                        .withRel(HttpMethod.POST.name())
                         .withName(HateoasData.ADD_ORDER));
     }
 
