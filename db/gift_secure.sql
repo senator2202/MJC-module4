@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `role_authority` (
   CONSTRAINT `FK_roles_authorities_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Дамп данных таблицы gift.role_authority: ~16 rows (приблизительно)
+-- Дамп данных таблицы gift.role_authority: ~17 rows (приблизительно)
 /*!40000 ALTER TABLE `role_authority` DISABLE KEYS */;
 REPLACE INTO `role_authority` (`role_id`, `authority_id`) VALUES
 	(1, 1),
@@ -234,15 +234,15 @@ REPLACE INTO `tag` (`id`, `name`, `operation`, `operation_date`) VALUES
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `password` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `password` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `role_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_name` (`username`) USING BTREE,
   KEY `FK_user_role` (`role_id`),
   CONSTRAINT `FK_user_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Дамп данных таблицы gift.user: ~6 rows (приблизительно)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
@@ -252,7 +252,8 @@ REPLACE INTO `user` (`id`, `name`, `username`, `password`, `role_id`) VALUES
 	(3, 'Alexey Alexeev', 'valerii', '$2a$12$h7nU6.6Oe8F5yXryEBtoeeWOKhyJJEG4dm.rYdHA0VOc023z79OVO', 2),
 	(4, 'Mihail Mihailov', 'mihail', '$2a$12$LoWiGszjJjlsv2jPxtsz3e6scAiwmhqhe2dFcRuhre2WM7.QOSo1e', 2),
 	(5, 'Artem Artemov', 'artem', '$2a$12$uH/ANs2pIXwT2z9mkiDQBe3pPnMFxLkzIKj/HJ/EKZdnfNthaW/UC', 2),
-	(6, 'Dukalis Muhomorov', 'dukalis', '$2a$12$wz5hDd8JgEz.3WKdyvD7EeiSUZWozmnC/YU00HFY6X5HmhL7nU0Km', 2);
+	(6, 'Dukalis Muhomorov', 'dukalis', '$2a$12$wz5hDd8JgEz.3WKdyvD7EeiSUZWozmnC/YU00HFY6X5HmhL7nU0Km', 2),
+	(8, 'Алексей Харитонов', 'senator220291@gmail.com', '$2a$12$EgDxrXi/CK2TWmiOuB53pejcurWEomjifR8h0YCWk77oeJxh/FYoi', 2);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

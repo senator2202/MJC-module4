@@ -2,6 +2,7 @@ package com.epam.esm.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -16,7 +17,7 @@ public class Role extends com.epam.esm.model.entity.Entity {
     @Column(name = "name", unique = true)
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_authority",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
