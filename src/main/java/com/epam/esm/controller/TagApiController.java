@@ -100,7 +100,7 @@ public class TagApiController {
      * @return the tag dto
      */
     @GetMapping(value = "/{id:^[1-9]\\d{0,18}$}", produces = "application/json;charset=UTF-8")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_TAGS) || hasRole('USER')")
     public TagDTO findById(@PathVariable long id) {
         TagDTO tag = service.findById(id).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)

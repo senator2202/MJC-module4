@@ -30,7 +30,7 @@ import java.util.Map;
  * The type Authentication controller.
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("api/auth")
 public class AuthenticationController {
 
     private static final String USER_NAME_MAP_KEY = "userName";
@@ -67,7 +67,6 @@ public class AuthenticationController {
      * @return the response entity
      */
     @PostMapping("/login")
-    @PreAuthorize("isAnonymous()")
     public ResponseEntity<Map<String, String>> authenticate(@RequestBody AuthenticationRequestDTO request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
@@ -85,7 +84,6 @@ public class AuthenticationController {
      * @return the user dto
      */
     @PostMapping("/register")
-    @PreAuthorize("isAnonymous()")
     public ResponseEntity<Map<String, String>> registerUser(@RequestBody UserRegistrationDTO data) {
         if (!GiftEntityValidator.correctUserRegistrationData(data)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.WRONG_USER_REGISTRATION_DATA);
