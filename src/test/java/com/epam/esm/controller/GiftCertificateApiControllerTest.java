@@ -205,7 +205,7 @@ class GiftCertificateApiControllerTest {
                 .perform(post("/api/certificates")
                         .content(jsonString)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @Test
@@ -262,7 +262,7 @@ class GiftCertificateApiControllerTest {
                 .perform(patch("/api/certificates/1")
                         .content(jsonString)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @Test
@@ -292,6 +292,6 @@ class GiftCertificateApiControllerTest {
     void deleteNoToken() throws Exception {
         mockMvc
                 .perform(delete("/api/certificates/1"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 }

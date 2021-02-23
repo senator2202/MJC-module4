@@ -140,6 +140,6 @@ class AuthenticationControllerTest {
     void logoutNoToken() throws Exception {
         mockMvc
                 .perform(delete("/api/auth/logout"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 }

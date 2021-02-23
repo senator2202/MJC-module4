@@ -26,6 +26,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class UserServiceImplTest {
@@ -90,5 +91,26 @@ class UserServiceImplTest {
         );
         assertThrows(UserNameAlreadyExistsException.class,
                 () -> userService.add(StaticDataProvider.USER_REGISTRATION_DTO));
+    }
+
+    @Test
+    void findByUsernameExist() {
+        Optional<User> result = Optional.of(StaticDataProvider.USER);
+        when(userRepository.findByUsername("Alex")).thenReturn(result);
+        assertEquals(result, userService.findByUsername("Alex"));
+    }
+
+    @Test
+    void findByUsernameNotExist() {
+        when(userRepository.findByUsername("Alexaaaaaaaaa")).thenReturn(Optional.empty());
+        assertEquals(Optional.empty(), userService.findByUsername("Alexaaaaaaaaa"));
+    }
+
+    @Test
+    void add() {
+        when(roleRepository.findUserRole()).thenReturn(StaticDataProvider.USER_ROLE);
+        when(passwordEncoder.encode(anyString())).thenReturn("encoded");
+        when(userRepository.save(any(User.class))).thenReturn(StaticDataProvider.USER);
+        assertEquals(StaticDataProvider.USER, userService.add(StaticDataProvider.USER));
     }
 }

@@ -90,7 +90,7 @@ class UserApiControllerTest {
     void findAllNoToken() throws Exception {
         mockMvc
                 .perform(get("/api/users"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @Test
@@ -121,7 +121,7 @@ class UserApiControllerTest {
     void findByIdNoToken() throws Exception {
         mockMvc
                 .perform(get("/api/users/111"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @Test
@@ -148,7 +148,7 @@ class UserApiControllerTest {
                 .perform(post("/api/users/2/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("12"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @ParameterizedTest
@@ -193,6 +193,6 @@ class UserApiControllerTest {
     void widelyUsedTagNoToken() throws Exception {
         mockMvc
                 .perform(get("/api/users/widely-used-tag"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 }

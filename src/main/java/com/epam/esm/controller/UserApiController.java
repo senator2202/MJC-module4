@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.epam.esm.controller.HateoasData.ORDERS;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 /**
@@ -32,6 +31,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @RequestMapping("api/users")
 public class UserApiController {
+
+    private static final String ORDERS = "orders";
+    private static final String GET_USER_ORDERS = "Get user orders";
+    private static final String ADD_ORDER = "Add an order on certificate by user";
 
     private UserService userService;
     private OrderService orderService;
@@ -75,7 +78,7 @@ public class UserApiController {
      * @return the list of user dto
      */
     @GetMapping
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USERS)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).READ_USERS) || hasRole('USER')")
     public List<UserDTO> findAll(@RequestParam(required = false) Integer page,
                                  @RequestParam(required = false) Integer size) {
         List<UserDTO> users = userService.findAll(page, size);
@@ -91,7 +94,7 @@ public class UserApiController {
      * @return the user dto
      */
     @GetMapping("/{id:^[1-9]\\d{0,18}$}")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USERS)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).READ_USERS) || hasRole('USER')")
     public UserDTO findById(@PathVariable long id) {
         UserDTO user = userService.findById(id).orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.USER_NOT_FOUND)
@@ -107,7 +110,7 @@ public class UserApiController {
      * @return the order dto
      */
     @PostMapping("/{userId:^[1-9]\\d{0,18}$}/orders")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).ADD_ORDERS)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).ADD_ORDERS)")
     public OrderDTO buyCertificate(@PathVariable long userId, @RequestBody long certificateId) {
         if (!GiftEntityValidator.correctId(certificateId)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.BUY_PARAMETERS_WRONG_FORMAT);
@@ -125,7 +128,7 @@ public class UserApiController {
      * @return the list
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USER_ORDERS)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).READ_USER_ORDERS) || hasRole('USER')")
     public List<OrderDTO> findUserOrders(@PathVariable long userId,
                                          @RequestParam(required = false) Integer page,
                                          @RequestParam(required = false) Integer size) {
@@ -141,7 +144,7 @@ public class UserApiController {
      * @return the order dto
      */
     @GetMapping("/{userId:^[1-9]\\d{0,18}$}/orders/{orderId:^[1-9]\\d{0,18}$}")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_USER_ORDERS)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).READ_USER_ORDERS) || hasRole('USER')")
     public OrderDTO findUserOrderById(@PathVariable long userId,
                                       @PathVariable long orderId) {
         Optional<OrderDTO> optional = orderService.findUserOrderById(userId, orderId);
@@ -156,7 +159,7 @@ public class UserApiController {
      * @return the tag dto
      */
     @GetMapping("/widely-used-tag")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).READ_WIDELY_USED_TAG)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).READ_WIDELY_USED_TAG)")
     public TagDTO widelyUsedTag() {
         TagDTO tag = orderService.mostWidelyUsedTagOfUserWithHighestOrdersSum().orElseThrow(
                 () -> exceptionProvider.giftEntityNotFoundException(ProjectError.TAG_NOT_FOUND)
@@ -172,10 +175,10 @@ public class UserApiController {
                 .add(linkTo(UserApiController.class).slash(user.getId()).withSelfRel())
                 .add(linkTo(UserApiController.class).slash(user.getId()).slash(ORDERS)
                         .withRel(HttpMethod.GET.name())
-                        .withName(HateoasData.GET_USER_ORDERS))
+                        .withName(GET_USER_ORDERS))
                 .add(linkTo(UserApiController.class).slash(user.getId()).slash(ORDERS)
                         .withRel(HttpMethod.POST.name())
-                        .withName(HateoasData.ADD_ORDER));
+                        .withName(ADD_ORDER));
     }
 
     /**

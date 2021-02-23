@@ -35,6 +35,7 @@ public class AuthenticationController {
 
     private static final String USER_NAME_MAP_KEY = "userName";
     private static final String TOKEN_MAP_KEY = "token";
+
     private JwtTokenProvider jwtTokenProvider;
     private AuthenticationManager authenticationManager;
     private ExceptionProvider exceptionProvider;

@@ -67,7 +67,7 @@ class TagApiControllerTest {
     void findAllNoToken() throws Exception {
         mockMvc
                 .perform(get("/api/tags"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @Test
@@ -98,7 +98,7 @@ class TagApiControllerTest {
     void findByIdNoToken() throws Exception {
         mockMvc
                 .perform(get("/api/tags/1"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @Test
@@ -152,7 +152,7 @@ class TagApiControllerTest {
                 .perform(post("/api/tags")
                         .content(jsonString)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
     @Test
@@ -209,7 +209,7 @@ class TagApiControllerTest {
                 .perform(put("/api/tags/1")
                         .content(jsonString)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 
 
@@ -240,6 +240,6 @@ class TagApiControllerTest {
     void deleteNoToken() throws Exception {
         mockMvc
                 .perform(delete("/api/tags/1"))
-                .andExpect(status().is(403));
+                .andExpect(status().is(302));
     }
 }

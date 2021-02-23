@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class UserDetailsServiceImplTest {
@@ -30,8 +31,8 @@ class UserDetailsServiceImplTest {
 
     @Test
     void loadUserByUsernameExists() {
-        when(userRepository.findByUsername("alex")).thenReturn(Optional.of(StaticDataProvider.USER));
-        assertEquals(userDetailsService.loadUserByUsername("alex"), StaticDataProvider.SECURITY_USER);
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(StaticDataProvider.USER));
+        assertEquals(StaticDataProvider.SECURITY_USER, userDetailsService.loadUserByUsername("alex"));
     }
 
     @Test

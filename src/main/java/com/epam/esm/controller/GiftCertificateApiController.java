@@ -34,6 +34,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("api/certificates")
 public class GiftCertificateApiController {
 
+    private static final String ADD_CERTIFICATE = "Add new certificate";
+    private static final String UPDATE_CERTIFICATE_FIELDS = "Update certificate fields";
+    private static final String DELETE_CERTIFICATE = "Delete certificate";
+
     private GiftCertificateService service;
     private ExceptionProvider exceptionProvider;
 
@@ -53,15 +57,15 @@ public class GiftCertificateApiController {
                 .add(linkTo(methodOn(GiftCertificateApiController.class).findById(certificate.getId())).withSelfRel())
                 .add(linkTo(GiftCertificateApiController.class)
                         .withRel(HttpMethod.POST.name())
-                        .withName(HateoasData.ADD_CERTIFICATE))
+                        .withName(ADD_CERTIFICATE))
                 .add(linkTo(methodOn(GiftCertificateApiController.class)
                         .findById(certificate.getId()))
                         .withRel(HttpMethod.PATCH.name())
-                        .withName(HateoasData.UPDATE_CERTIFICATE_FIELDS))
+                        .withName(UPDATE_CERTIFICATE_FIELDS))
                 .add(linkTo(methodOn(GiftCertificateApiController.class)
                         .findById(certificate.getId()))
                         .withRel(HttpMethod.DELETE.name())
-                        .withName(HateoasData.DELETE_CERTIFICATE));
+                        .withName(DELETE_CERTIFICATE));
     }
 
     /**
@@ -139,7 +143,7 @@ public class GiftCertificateApiController {
      * @return the gift certificate dto
      */
     @PostMapping
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).ADD_CERTIFICATES)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).ADD_CERTIFICATES)")
     public GiftCertificateDTO create(@RequestBody GiftCertificateDTO certificate) {
         if (!GiftEntityValidator.correctGiftCertificate(certificate)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.CERTIFICATE_WRONG_PARAMETERS);
@@ -156,7 +160,7 @@ public class GiftCertificateApiController {
      * @return the gift certificate dto
      */
     @PatchMapping("/{id:^[1-9]\\d{0,18}$}")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).UPDATE_CERTIFICATES)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).UPDATE_CERTIFICATES)")
     public GiftCertificateDTO update(@RequestBody GiftCertificateDTO certificate, @PathVariable long id) {
         if (!GiftEntityValidator.correctGiftCertificateOptional(certificate)) {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.CERTIFICATE_WRONG_PARAMETERS);
@@ -174,7 +178,7 @@ public class GiftCertificateApiController {
      * @return the delete result
      */
     @DeleteMapping("/{id:^[1-9]\\d{0,18}$}")
-    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.Permission).DELETE_CERTIFICATES)")
+    @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).DELETE_CERTIFICATES)")
     public ResponseEntity<DeleteResultDTO> delete(@PathVariable long id) {
         boolean result = service.delete(id);
         return new ResponseEntity<>(new DeleteResultDTO(result), result ? HttpStatus.OK : HttpStatus.NOT_FOUND);

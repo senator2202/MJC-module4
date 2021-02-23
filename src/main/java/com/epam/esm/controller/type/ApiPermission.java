@@ -1,6 +1,9 @@
 package com.epam.esm.controller.type;
 
-public enum Permission {
+/**
+ * The enum with endpoint permissions.
+ */
+public enum ApiPermission {
     ADD_CERTIFICATES,
     ADD_ORDERS,
     ADD_TAGS,

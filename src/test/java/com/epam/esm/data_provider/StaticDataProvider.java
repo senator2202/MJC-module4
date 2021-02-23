@@ -13,14 +13,12 @@ import com.epam.esm.model.entity.Role;
 import com.epam.esm.model.entity.Tag;
 import com.epam.esm.model.entity.User;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class StaticDataProvider {
 
@@ -37,6 +35,7 @@ public class StaticDataProvider {
     public static final List<Tag> TAG_LIST_LIMIT;
     public static final UserDTO USER_DTO;
     public static final User USER;
+    public static final Role USER_ROLE;
     public static final List<UserDTO> USER_DTO_LIST;
     public static final List<UserDTO> USER_DTO_LIST_LIMIT;
     public static final List<User> USER_LIST;
@@ -77,13 +76,13 @@ public class StaticDataProvider {
         USER.setId(1L);
         USER.setName("Alex");
         USER.setUsername("alex");
-        String password = new BCryptPasswordEncoder(12).encode("password");
+        String password = "encoded";
         USER.setPassword(password);
-        Role role = new Role();
-        role.setName("USER");
-        role.setId(1L);
-        role.setAuthorities(Set.of(new Authority(1L, "READ_TAGS"), new Authority(2L, "READ_CERTIFICATES")));
-        USER.setRole(role);
+        USER_ROLE = new Role();
+        USER_ROLE.setName("USER");
+        USER_ROLE.setId(2L);
+        USER_ROLE.setAuthorities(Set.of(new Authority(1L, "READ_TAGS"), new Authority(2L, "READ_CERTIFICATES")));
+        USER.setRole(USER_ROLE);
         USER_DTO_LIST = Collections.nCopies(10, USER_DTO);
         USER_DTO_LIST_LIMIT = Collections.nCopies(LIMIT, USER_DTO);
         USER_LIST = Collections.nCopies(10, USER);
@@ -150,9 +149,7 @@ public class StaticDataProvider {
         SECURITY_USER = new SecurityUser(
                 "alex",
                 password,
-                role.getAuthorities().stream()
-                        .map(au -> new SimpleGrantedAuthority(au.getName()))
-                        .collect(Collectors.toSet()),
+                Set.of(new SimpleGrantedAuthority("READ_TAGS"), new SimpleGrantedAuthority("READ_CERTIFICATES")),
                 1L,
                 false);
     }
