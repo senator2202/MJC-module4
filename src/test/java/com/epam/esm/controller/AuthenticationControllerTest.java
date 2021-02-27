@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.app.SpringBootRestApplication;
-import com.epam.esm.model.dto.AuthenticationRequestDTO;
+import com.epam.esm.model.dto.UserAuthenticationDTO;
 import com.epam.esm.model.dto.UserRegistrationDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +49,7 @@ class AuthenticationControllerTest {
 
     @Test
     void authenticate() throws Exception {
-        String jsonString = asJsonString(new AuthenticationRequestDTO("petr", "petr"));
+        String jsonString = asJsonString(new UserAuthenticationDTO("petr", "petr"));
         mockMvc
                 .perform(post("/api/auth/login")
                         .content(jsonString)
@@ -59,7 +59,7 @@ class AuthenticationControllerTest {
 
     @Test
     void authenticateBadData() throws Exception {
-        String jsonString = asJsonString(new AuthenticationRequestDTO("1111", "1111"));
+        String jsonString = asJsonString(new UserAuthenticationDTO("1111", "1111"));
         mockMvc
                 .perform(post("/api/auth/login")
                         .content(jsonString)
@@ -69,7 +69,7 @@ class AuthenticationControllerTest {
 
     @Test
     void authenticateWithValidToken() throws Exception {
-        String jsonString = asJsonString(new AuthenticationRequestDTO("petr", "petr"));
+        String jsonString = asJsonString(new UserAuthenticationDTO("petr", "petr"));
         mockMvc
                 .perform(post("/api/auth/login")
                         .header(AUTH_HEADER, USER_TOKEN)
@@ -80,7 +80,7 @@ class AuthenticationControllerTest {
 
     @Test
     void authenticateWithBadToken() throws Exception {
-        String jsonString = asJsonString(new AuthenticationRequestDTO("petr", "petr"));
+        String jsonString = asJsonString(new UserAuthenticationDTO("petr", "petr"));
         mockMvc
                 .perform(post("/api/auth/login")
                         .header(AUTH_HEADER, "USER_TOKEN")

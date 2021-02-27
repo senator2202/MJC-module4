@@ -3,7 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.controller.error_handler.ProjectError;
 import com.epam.esm.controller.security.JwtTokenProvider;
 import com.epam.esm.exception.ExceptionProvider;
-import com.epam.esm.model.dto.AuthenticationRequestDTO;
+import com.epam.esm.model.dto.UserAuthenticationDTO;
 import com.epam.esm.model.dto.UserRegistrationDTO;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.GiftEntityValidator;
@@ -68,7 +68,7 @@ public class AuthenticationController {
      * @return the response entity
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> authenticate(@RequestBody AuthenticationRequestDTO request) {
+    public ResponseEntity<Map<String, String>> authenticate(@RequestBody UserAuthenticationDTO request) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
                     request.getPassword()));

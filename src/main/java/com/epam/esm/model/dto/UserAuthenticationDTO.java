@@ -3,12 +3,12 @@ package com.epam.esm.model.dto;
 /**
  * The DTO object for authentication request
  */
-public class AuthenticationRequestDTO {
+public class UserAuthenticationDTO {
 
     private String username;
     private String password;
 
-    public AuthenticationRequestDTO(String username, String password) {
+    public UserAuthenticationDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }

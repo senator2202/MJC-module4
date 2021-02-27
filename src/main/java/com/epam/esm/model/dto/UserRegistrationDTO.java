@@ -3,7 +3,7 @@ package com.epam.esm.model.dto;
 /**
  * The DTO object for user registration data
  */
-public class UserRegistrationDTO extends AuthenticationRequestDTO {
+public class UserRegistrationDTO extends UserAuthenticationDTO {
 
     private String name;
     private String passwordRepeat;
