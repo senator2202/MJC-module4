@@ -3,7 +3,7 @@ package com.epam.esm.exception;
 import org.springframework.http.HttpStatus;
 
 /**
- * The type Abstract runtime exception. Contains
+ * The type Abstract runtime exception. Contains some basic necessary fields.
  */
 public abstract class AbstractRuntimeException extends RuntimeException {
     /**
