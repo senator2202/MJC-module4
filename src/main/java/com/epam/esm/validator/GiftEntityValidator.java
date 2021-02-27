@@ -3,6 +3,7 @@ package com.epam.esm.validator;
 import com.epam.esm.model.dto.GiftCertificateDTO;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.dto.UserRegistrationDTO;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -21,13 +22,11 @@ public class GiftEntityValidator {
     private static final String PASSWORD_REGEX = NAME_REGEX;
     private static final String CERTIFICATE_DESCRIPTION_REGEX = "^.{1,250}$";
     private static final String POSITIVE_INT_REGEX = "^[1-9]\\d{0,9}$";
-    private static final String PRICE = "price";
-    private static final String NAME = "name";
-    private static final String CREATE_DATE = "create-date";
-    private static final String LAST_UPDATE_DATE = "last-update-date";
-    private static final String DURATION = "duration";
-    private static final String DESC = "desc";
-    private static final String ASC = "asc";
+    private static final String PRICE_REQUEST_PARAMETER = "price";
+    private static final String NAME_REQUEST_PARAMETER = "name";
+    private static final String CREATE_DATE_REQUEST_PARAMETER = "create-date";
+    private static final String LAST_UPDATE_DATE_REQUEST_PARAMETER = "last-update-date";
+    private static final String DURATION_REQUEST_PARAMETER = "duration";
 
     private GiftEntityValidator() {
     }
@@ -70,15 +69,18 @@ public class GiftEntityValidator {
      * Method checks if sortType has correct value
      */
     private static boolean correctSortType(String sortType) {
-        return sortType == null || sortType.equals(PRICE) || sortType.equals(NAME) || sortType.equals(CREATE_DATE)
-                || sortType.equals(LAST_UPDATE_DATE) || sortType.equals(DURATION);
+        return sortType == null || sortType.equals(PRICE_REQUEST_PARAMETER)
+                || sortType.equals(NAME_REQUEST_PARAMETER) || sortType.equals(CREATE_DATE_REQUEST_PARAMETER)
+                || sortType.equals(LAST_UPDATE_DATE_REQUEST_PARAMETER) || sortType.equals(DURATION_REQUEST_PARAMETER);
     }
 
     /**
      * Method checks if sort direction has correct value
      */
     private static boolean correctDirection(String direction) {
-        return direction == null || direction.equals(ASC) || direction.equals(DESC);
+        return direction == null
+                || direction.equalsIgnoreCase(Sort.Direction.ASC.name())
+                || direction.equalsIgnoreCase(Sort.Direction.DESC.name());
     }
 
     /**

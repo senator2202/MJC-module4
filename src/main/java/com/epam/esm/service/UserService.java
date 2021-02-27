@@ -2,7 +2,6 @@ package com.epam.esm.service;
 
 import com.epam.esm.model.dto.UserDTO;
 import com.epam.esm.model.dto.UserRegistrationDTO;
-import com.epam.esm.model.entity.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,8 +35,4 @@ public interface UserService {
      * @return the user dto
      */
     UserDTO add(UserRegistrationDTO data);
-
-    Optional<User> findByUsername(String username);
-
-    User add(User user);
 }

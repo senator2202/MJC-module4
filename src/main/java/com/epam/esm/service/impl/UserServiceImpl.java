@@ -77,17 +77,4 @@ public class UserServiceImpl implements UserService {
         user.setRole(roleRepository.findUserRole());
         return ObjectConverter.toUserDTO(userRepository.save(user));
     }
-
-    @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    @Override
-    @Transactional
-    public User add(User user) {
-        user.setRole(roleRepository.findUserRole());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
 }
