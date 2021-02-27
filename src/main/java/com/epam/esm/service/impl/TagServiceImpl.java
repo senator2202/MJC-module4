@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -42,14 +41,14 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public TagDTO add(TagDTO entity) {
         return tagRepository.findByName(entity.getName()).map(ObjectConverter::toTagDTO)
                 .orElseGet(() -> ObjectConverter.toTagDTO(tagRepository.save(ObjectConverter.toTagEntity(entity))));
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public Optional<TagDTO> update(TagDTO entity) {
         Optional<Tag> optional = tagRepository.findById(entity.getId());
         return optional.map(t -> ObjectConverter.toTagDTO(tagRepository.save(ObjectConverter.toTagEntity(entity))));

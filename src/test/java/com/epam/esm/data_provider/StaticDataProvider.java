@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class, providing test data for all test classes
+ */
 public class StaticDataProvider {
 
     public static final Integer LIMIT = 2;

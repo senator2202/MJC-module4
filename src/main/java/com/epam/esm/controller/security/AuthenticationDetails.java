@@ -1,5 +1,7 @@
 package com.epam.esm.controller.security;
 
+import java.util.Objects;
+
 /**
  * Class, storing information, that is supposed to be written into Authentication.details field.
  */
@@ -41,5 +43,29 @@ public class AuthenticationDetails {
      */
     public boolean isAdmin() {
         return isAdmin;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        AuthenticationDetails details = (AuthenticationDetails) o;
+
+        if (isAdmin != details.isAdmin) {
+            return false;
+        }
+        return Objects.equals(userId, details.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userId != null ? userId.hashCode() : 0;
+        result = 31 * result + (isAdmin ? 1 : 0);
+        return result;
     }
 }

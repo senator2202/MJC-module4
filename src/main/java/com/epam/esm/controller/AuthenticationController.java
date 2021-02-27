@@ -79,7 +79,7 @@ public class AuthenticationController {
     }
 
     /**
-     * Endpoint for registering new users.
+     * Endpoint for registration new users.
      *
      * @param data the user registration data
      * @return the user dto
@@ -90,7 +90,7 @@ public class AuthenticationController {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.WRONG_USER_REGISTRATION_DATA);
         }
         userService.add(data);
-        return getTokenResponseEntity(data.getUserName());
+        return getTokenResponseEntity(data.getUsername());
     }
 
     /**

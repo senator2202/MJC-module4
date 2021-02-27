@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Test class for DateTimeUtility methods
+ */
 class DateTimeUtilityTest {
 
     @Test

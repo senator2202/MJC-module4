@@ -28,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Test class for GiftCertificateRepository methods, using in application
+ */
 @SpringBootTest(classes = SpringBootRestApplication.class)
 @Transactional
 class GiftCertificateRepositoryTest {

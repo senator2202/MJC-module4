@@ -3,17 +3,14 @@ package com.epam.esm.model.dto;
 /**
  * The DTO object for user registration data
  */
-public class UserRegistrationDTO {
+public class UserRegistrationDTO extends AuthenticationRequestDTO {
 
     private String name;
-    private String userName;
-    private String password;
     private String passwordRepeat;
 
-    public UserRegistrationDTO(String name, String userName, String password, String passwordRepeat) {
+    public UserRegistrationDTO(String name, String username, String password, String passwordRepeat) {
+        super(username, password);
         this.name = name;
-        this.userName = userName;
-        this.password = password;
         this.passwordRepeat = passwordRepeat;
     }
 
@@ -23,22 +20,6 @@ public class UserRegistrationDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getPasswordRepeat() {

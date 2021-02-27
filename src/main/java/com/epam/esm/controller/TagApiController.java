@@ -103,7 +103,7 @@ public class TagApiController {
      * @param id the id
      * @return the tag dto
      */
-    @GetMapping(value = "/{id:^[1-9]\\d{0,18}$}", produces = "application/json;charset=UTF-8")
+    @GetMapping(value = "/{id:^[1-9]\\d{0,18}$}")
     @PreAuthorize("hasAuthority(T(com.epam.esm.controller.type.ApiPermission).READ_TAGS) || hasRole('USER')")
     public TagDTO findById(@PathVariable long id) {
         TagDTO tag = service.findById(id).orElseThrow(

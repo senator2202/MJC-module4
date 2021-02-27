@@ -47,7 +47,7 @@ public class GiftCertificateApiController {
      * @param certificate the certificate
      * @return the gift certificate dto
      */
-    static GiftCertificateDTO addSelfLink(GiftCertificateDTO certificate) {
+    static GiftCertificateDTO addLinks(GiftCertificateDTO certificate) {
         if (certificate.getTags() != null) {
             certificate.setTags(
                     certificate.getTags().stream().map(TagApiController::addLinks).collect(Collectors.toList())
@@ -116,7 +116,7 @@ public class GiftCertificateApiController {
         List<GiftCertificateDTO> giftCertificates =
                 service.findAll(name, description, tagNames, sortType, direction, page, size);
         return giftCertificates.stream()
-                .map(GiftCertificateApiController::addSelfLink)
+                .map(GiftCertificateApiController::addLinks)
                 .collect(Collectors.toList());
     }
 
@@ -133,7 +133,7 @@ public class GiftCertificateApiController {
                 .orElseThrow(
                         () -> exceptionProvider.giftEntityNotFoundException(ProjectError.GIFT_CERTIFICATE_NOT_FOUND)
                 );
-        return addSelfLink(giftCertificate);
+        return addLinks(giftCertificate);
     }
 
     /**
@@ -149,7 +149,7 @@ public class GiftCertificateApiController {
             throw exceptionProvider.wrongParameterFormatException(ProjectError.CERTIFICATE_WRONG_PARAMETERS);
         }
         GiftCertificateDTO created = service.add(certificate);
-        return addSelfLink(created);
+        return addLinks(created);
     }
 
     /**
@@ -168,7 +168,7 @@ public class GiftCertificateApiController {
         certificate.setId(id);
         GiftCertificateDTO updated = service.update(certificate)
                 .orElseThrow(() -> exceptionProvider.giftEntityNotFoundException(ProjectError.GIFT_CERTIFICATE_NOT_FOUND));
-        return addSelfLink(updated);
+        return addLinks(updated);
     }
 
     /**

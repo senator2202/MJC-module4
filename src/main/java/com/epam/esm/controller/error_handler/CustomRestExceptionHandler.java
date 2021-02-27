@@ -5,8 +5,6 @@ import com.epam.esm.exception.GiftEntityNotFoundException;
 import com.epam.esm.exception.JwtAuthenticationException;
 import com.epam.esm.exception.UserNameAlreadyExistsException;
 import com.epam.esm.exception.WrongParameterFormatException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,16 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  */
 @ControllerAdvice
 public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
-
-    /**
-     * Source for localized messages
-     */
-    private final ResourceBundleMessageSource messageSource;
-
-    @Autowired
-    public CustomRestExceptionHandler(ResourceBundleMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
 
     /**
      * Method handles custom runtime exceptions.
@@ -40,7 +28,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
             UserNameAlreadyExistsException.class,
             JwtAuthenticationException.class
     })
-    public ResponseEntity<ApiError> notFound(AbstractRuntimeException e) {
+    public ResponseEntity<ApiError> handleAbstractException(AbstractRuntimeException e) {
         ApiError apiError = new ApiError(e.getMessage(), e.getErrorCode());
         return new ResponseEntity<>(apiError, e.getHttpStatus());
     }

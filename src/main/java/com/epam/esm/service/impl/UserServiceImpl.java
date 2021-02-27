@@ -67,12 +67,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO add(UserRegistrationDTO data) {
-        if (userRepository.existsByUsername(data.getUserName())) {
+        if (userRepository.existsByUsername(data.getUsername())) {
             throw exceptionProvider.userNameAlreadyExistsException(ProjectError.USER_NAME_ALREADY_EXISTS);
         }
         User user = new User();
         user.setName(data.getName());
-        user.setUsername(data.getUserName());
+        user.setUsername(data.getUsername());
         user.setPassword(passwordEncoder.encode(data.getPassword()));
         user.setRole(roleRepository.findUserRole());
         return ObjectConverter.toUserDTO(userRepository.save(user));

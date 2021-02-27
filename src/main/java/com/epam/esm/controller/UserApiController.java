@@ -187,7 +187,7 @@ public class UserApiController {
     private OrderDTO addOrderLinks(OrderDTO order) {
         Long userId = order.getUser().getId();
         Long orderId = order.getId();
-        GiftCertificateApiController.addSelfLink(order.getGiftCertificate());
+        GiftCertificateApiController.addLinks(order.getGiftCertificate());
         addUserLinks(order.getUser());
         return order
                 .add(linkTo(UserApiController.class).slash(userId).slash(ORDERS).slash(orderId).withSelfRel());

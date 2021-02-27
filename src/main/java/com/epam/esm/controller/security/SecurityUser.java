@@ -1,9 +1,8 @@
 package com.epam.esm.controller.security;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
@@ -12,13 +11,9 @@ import java.util.Set;
  * userId and isAdmin variables. They are written into Authentication.details field and are used in
  * PersonalDataFilter.
  */
-public class SecurityUser implements UserDetails {
+public class SecurityUser extends User {
 
-    private final String userName;
-    private final String password;
-    private final Set<? extends GrantedAuthority> grantedAuthorities;
-    private final Long userId;
-    private final boolean isAdmin;
+    private final AuthenticationDetails authenticationDetails;
 
     /**
      * Instantiates a new Security user.
@@ -32,44 +27,12 @@ public class SecurityUser implements UserDetails {
     public SecurityUser(String userName, String password,
                         Set<? extends GrantedAuthority> grantedAuthorities,
                         Long userId, boolean isAdmin) {
-        this.userName = userName;
-        this.password = password;
-        this.grantedAuthorities = grantedAuthorities;
-        this.userId = userId;
-        this.isAdmin = isAdmin;
+        super(userName, password, grantedAuthorities);
+        authenticationDetails = new AuthenticationDetails(userId, isAdmin);
     }
 
-    /**
-     * Gets user id.
-     *
-     * @return the user id
-     */
-    public Long getUserId() {
-        return userId;
-    }
-
-    /**
-     * Is admin boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return grantedAuthorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return userName;
+    public AuthenticationDetails getAuthenticationDetails() {
+        return authenticationDetails;
     }
 
     @Override
@@ -103,28 +66,25 @@ public class SecurityUser implements UserDetails {
 
         SecurityUser that = (SecurityUser) o;
 
-        if (isAdmin != that.isAdmin) {
+
+        if (!Objects.equals(super.getUsername(), that.getUsername())) {
             return false;
         }
-        if (!Objects.equals(userName, that.userName)) {
+        if (!Objects.equals(getPassword(), that.getPassword())) {
             return false;
         }
-        if (!Objects.equals(password, that.password)) {
+        if (!Objects.equals(getAuthorities(), that.getAuthorities())) {
             return false;
         }
-        if (!Objects.equals(grantedAuthorities, that.grantedAuthorities)) {
-            return false;
-        }
-        return Objects.equals(userId, that.userId);
+        return Objects.equals(authenticationDetails, that.authenticationDetails);
     }
 
     @Override
     public int hashCode() {
-        int result = userName != null ? userName.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (grantedAuthorities != null ? grantedAuthorities.hashCode() : 0);
-        result = 31 * result + (userId != null ? userId.hashCode() : 0);
-        result = 31 * result + (isAdmin ? 1 : 0);
+        int result = getUsername() != null ? getUsername().hashCode() : 0;
+        result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
+        result = 31 * result + (getAuthorities() != null ? getAuthorities().hashCode() : 0);
+        result = 31 * result + (authenticationDetails != null ? authenticationDetails.hashCode() : 0);
         return result;
     }
 }

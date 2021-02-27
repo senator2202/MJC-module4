@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
+/**
+ * The repository for Gift certificate entity.
+ */
 @Repository
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Long>,
         QuerydslPredicateExecutor<GiftCertificate> {

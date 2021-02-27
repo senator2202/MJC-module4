@@ -14,6 +14,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for GiftEntityValidator methods, validating request parameters
+ */
 class GiftEntityValidatorTest {
 
     static Stream<Arguments> correctIdArgs() {

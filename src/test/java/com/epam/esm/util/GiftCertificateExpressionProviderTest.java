@@ -10,6 +10,10 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for GiftCertificateExpressionProvider methods,
+ * providing BooleanExpressions for QuerydslPredicateExecutor<GiftCertificate> interface
+ */
 class GiftCertificateExpressionProviderTest {
 
     static Stream<Arguments> argsGetBooleanExpression() {

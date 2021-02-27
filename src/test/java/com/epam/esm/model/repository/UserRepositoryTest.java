@@ -16,6 +16,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for UserRepository methods, using in application
+ */
 @SpringBootTest(classes = SpringBootRestApplication.class)
 @Transactional
 class UserRepositoryTest {

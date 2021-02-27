@@ -40,14 +40,14 @@ public class PersonalDataFilter extends GenericFilter {
     /**
      * User concrete order URI pattern.
      */
-    private static final String USER_ORDER_RL_PATTERN = USER_ORDERS_URL_PATTERN + "/[1-9]\\d{0,18}";
+    private static final String USER_ORDER_URL_PATTERN = USER_ORDERS_URL_PATTERN + "/[1-9]\\d{0,18}";
 
     @Override
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {
         String uri = ((HttpServletRequest) servletRequest).getRequestURI();
-        if (uri.matches(USER_ORDER_RL_PATTERN) || uri.matches(USER_ORDERS_URL_PATTERN)) {
+        if (uri.matches(USER_ORDER_URL_PATTERN) || uri.matches(USER_ORDERS_URL_PATTERN)) {
             String[] uriSplit = uri.split(URI_SEPARATOR);
             Long userId = Long.parseLong(uriSplit[USER_ID_URI_INDEX]);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

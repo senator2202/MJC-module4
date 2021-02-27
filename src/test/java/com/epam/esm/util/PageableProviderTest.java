@@ -11,6 +11,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for PageableProvider methods, providing Pageable objects for jpa repositories
+ */
 class PageableProviderTest {
 
     static Stream<Arguments> argsPageableWithSort() {

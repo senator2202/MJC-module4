@@ -234,7 +234,7 @@ public class GiftEntityValidator {
         if (data.getName() == null || !data.getName().matches(NAME_REGEX)) {
             return false;
         }
-        if (data.getUserName() == null || !data.getUserName().matches(LOGIN_REGEX)) {
+        if (data.getUsername() == null || !data.getUsername().matches(LOGIN_REGEX)) {
             return false;
         }
         return data.getPassword() != null

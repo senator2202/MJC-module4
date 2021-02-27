@@ -97,9 +97,9 @@ public class Tag extends Entity {
 
         Tag tag = (Tag) o;
 
-        /*if (!Objects.equals(id, tag.id)) {
+        if (!Objects.equals(id, tag.id)) {
             return false;
-        }*/
+        }
         return Objects.equals(name, tag.name);
     }
 

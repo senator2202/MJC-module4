@@ -103,7 +103,8 @@ public class JwtTokenProvider {
                 securityUser.getPassword(),
                 securityUser.getAuthorities()
         );
-        auth.setDetails(new AuthenticationDetails(securityUser.getUserId(), securityUser.isAdmin()));
+        auth.setDetails(new AuthenticationDetails(securityUser.getAuthenticationDetails().getUserId(),
+                securityUser.getAuthenticationDetails().isAdmin()));
         return auth;
     }
 

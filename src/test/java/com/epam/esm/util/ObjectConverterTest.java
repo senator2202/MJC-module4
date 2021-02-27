@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Test class for ObjectConverter methods, converting dto to entities and back
+ */
 class ObjectConverterTest {
 
     @Test
