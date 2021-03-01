@@ -1,7 +1,9 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.model.dto.TagDTO;
+import com.epam.esm.model.entity.GiftCertificate;
 import com.epam.esm.model.entity.Tag;
+import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.ObjectConverter;
@@ -22,10 +24,16 @@ import java.util.Optional;
 public class TagServiceImpl implements TagService {
 
     private TagRepository tagRepository;
+    private GiftCertificateRepository giftCertificateRepository;
 
     @Autowired
     public void setTagRepository(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
+    }
+
+    @Autowired
+    public void setGiftCertificateRepository(GiftCertificateRepository giftCertificateRepository) {
+        this.giftCertificateRepository = giftCertificateRepository;
     }
 
     @Override
@@ -55,8 +63,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public boolean delete(long id) {
-        if (tagRepository.existsById(id)) {
+        Optional<Tag> optional = tagRepository.findById(id);
+        if (optional.isPresent()) {
+            Tag tag = optional.get();
+            List<GiftCertificate> certificates = giftCertificateRepository.findGiftCertificateByTagsContaining(tag);
+            certificates.forEach(c -> c.getTags().remove(tag));
             tagRepository.deleteById(id);
             return true;
         } else {

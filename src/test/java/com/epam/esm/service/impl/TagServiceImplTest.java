@@ -4,6 +4,7 @@ import com.epam.esm.app.SpringBootRestApplication;
 import com.epam.esm.data_provider.StaticDataProvider;
 import com.epam.esm.model.dto.TagDTO;
 import com.epam.esm.model.entity.Tag;
+import com.epam.esm.model.repository.GiftCertificateRepository;
 import com.epam.esm.model.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +41,8 @@ class TagServiceImplTest {
     private TagRepository tagRepository;
     @Mock
     private Page<Tag> tagPage;
+    @Mock
+    private GiftCertificateRepository giftCertificateRepository;
 
     @BeforeEach
     void setUp() {
@@ -106,7 +110,8 @@ class TagServiceImplTest {
 
     @Test
     void deleteTrue() {
-        when(tagRepository.existsById(1L)).thenReturn(true);
+        when(tagRepository.findById(1L)).thenReturn(Optional.of(StaticDataProvider.TAG));
+        when(giftCertificateRepository.findGiftCertificateByTagsContaining(any(Tag.class))).thenReturn(new ArrayList<>());
         doNothing().when(tagRepository).deleteById(1L);
         assertTrue(service.delete(1L));
     }
